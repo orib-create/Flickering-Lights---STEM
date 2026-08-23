@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>מעבדת חקר: מה גורם לנורה להיכבות ולהידלק?</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{font-family:Arial,sans-serif;background:#dce3ec;display:flex;justify-content:center;align-items:center;padding:20px;}
+.container{background:white;border-radius:14px;overflow:hidden;width:100%;height:100%;box-shadow:0 6px 24px rgba(0,0,0,0.18);display:flex;flex-direction:column;}
+.main-content{flex:1;min-height:0;}
+.title-bar{background:#1a2f5e;color:white;padding:15px 24px;direction:rtl;}
+.title-bar h1{font-size:19px;font-weight:bold;}
+.main-content{display:flex;padding:18px;gap:16px;direction:rtl;align-items:stretch;}
+.right-panel{width:215px;display:flex;flex-direction:column;gap:10px;direction:rtl;flex-shrink:0;}
+.graph-section{flex:1;border:2px solid #1a2f5e;border-radius:10px;padding:12px;background:#fafafa;display:flex;flex-direction:column;}
+canvas{display:block;}
+.bulb-card{border:2px solid #1a2f5e;border-radius:10px;overflow:hidden;flex-shrink:0;}
+.card-header{background:#1a2f5e;color:white;text-align:center;padding:10px;font-weight:bold;font-size:18px;}
+.bulb-wrap{display:flex;justify-content:center;padding:8px 0 2px;}
+.status-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 12px 10px;font-size:16px;font-weight:bold;color:#333;}
+.status-dot{width:14px;height:14px;border-radius:50%;background:#9e9e9e;flex-shrink:0;border:2px solid #666;}
+.status-dot.on{background:#2e7d32;border-color:#1b5e20;}
+.temp-panel{padding:8px 14px 12px;border-top:1px solid #e0e0e0;text-align:center;}
+.temp-label{font-size:16px;color:#555;margin-bottom:2px;}
+.temp-val{font-weight:bold;font-size:20px;color:#1a2f5e;display:block;}
+.thresh-label{font-size:16px;color:#c62828;margin:6px 0 2px;}
+.thresh-val{font-weight:bold;font-size:20px;color:#c62828;display:block;}
+.buttons{display:flex;flex-direction:column;gap:8px;flex:1;justify-content:flex-end;}
+.btn{border:none;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer;direction:rtl;transition:filter 0.15s;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;}
+.btn:hover{filter:brightness(0.9);}
+.btn:focus{outline:3px solid #f9a825;outline-offset:2px;}
+.btn-play{background:#2e7d32;color:white;width:100%;}
+.btn-row{display:flex;gap:7px;}
+.btn-small{flex:1;background:#37474f;color:white;font-size:16px;padding:8px 8px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;}
+.btn-small:hover{filter:brightness(0.9);}
+.btn-small:focus{outline:3px solid #f9a825;outline-offset:2px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title-bar">
+    <h1>מעבדת חקר: מה גורם לנורה להיכבות ולהידלק?</h1>
+  </div>
+  <div class="main-content">
+    <div class="right-panel">
+      <div class="bulb-card">
+        <div class="card-header">מצב הנורה</div>
+        <div class="bulb-wrap">
+          <svg id="bulb-svg" width="100" height="120" viewBox="0 0 80 100">
+            <defs>
+              <radialGradient id="glowGrad" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#fffde7"/>
+                <stop offset="50%" stop-color="#ffee58"/>
+                <stop offset="100%" stop-color="#f9a825"/>
+              </radialGradient>
+              <radialGradient id="dimGrad" cx="50%" cy="40%" r="55%">
+                <stop offset="0%" stop-color="#e8e8e8"/>
+                <stop offset="100%" stop-color="#9e9e9e"/>
+              </radialGradient>
+              <filter id="gf" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="5" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <ellipse id="halo" cx="40" cy="36" rx="32" ry="32" fill="#ffee58" opacity="0" filter="url(#gf)"/>
+            <path id="bulb-glass" d="M22,36 Q22,14 40,14 Q58,14 58,36 Q58,53 50,61 L30,61 Q22,53 22,36" fill="url(#dimGrad)" stroke="#bbb" stroke-width="1"/>
+            <rect x="29" y="61" width="22" height="6" fill="#bdbdbd" rx="1"/>
+            <rect x="29" y="67" width="22" height="5" fill="#adadad" rx="1"/>
+            <rect x="29" y="72" width="22" height="5" fill="#9e9e9e" rx="1"/>
+            <polyline id="filament" points="35,58 35,42 40,36 45,42 45,58" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="status-row">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="state-label">הנורה כבויה</span>
+        </div>
+        <div class="temp-panel">
+          <div class="temp-label">&#127777; טמפרטורה נוכחית</div>
+          <span class="temp-val" id="cur-temp">25&deg;C</span>
+          <div class="thresh-label">- - - טמפרטורת סף</div>
+          <span class="thresh-val">120&deg;C</span>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="btn btn-play" id="play-btn" onclick="togglePlay()" aria-label="הפעלת הסימולציה">
+          <span id="play-text">הפעלה</span><span id="play-icon">&#9664;</span>
+        </button>
+        <div class="btn-row">
+          <button class="btn-small" id="time-btn" aria-live="polite" aria-label="זמן נוכחי">
+            <span>&#128336;</span><span id="time-display">0 שנ׳</span>
+          </button>
+          <button class="btn-small" onclick="resetSim()" aria-label="איפוס">
+            <span>&#8635;</span><span>איפוס</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="graph-section">
+      <canvas id="graph"></canvas>
+    </div>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById("graph");
+const ctx = canvas.getContext("2d");
+const DPR = window.devicePixelRatio || 1;
+let LW = 560, LH = 370;
+const M = {top:38, right:20, bottom:70, left:78};
+let GW = LW - M.left - M.right;
+let GH = LH - M.top  - M.bottom;
+const MAX_T=100, MIN_TEMP=25, MAX_TEMP=150, THRESH=120;
+const GRAPH_COLOR = "#1565c0";
+
+function fitCanvas() {
+  const section = document.querySelector(".graph-section");
+  const panel   = document.querySelector(".right-panel");
+  LW = section.clientWidth - 24;
+  LH = panel.offsetHeight - 24;
+  canvas.width  = LW * DPR;
+  canvas.height = LH * DPR;
+  canvas.style.width  = LW + "px";
+  canvas.style.height = LH + "px";
+  ctx.scale(DPR, DPR);
+  GW = LW - M.left - M.right;
+  GH = LH - M.top  - M.bottom;
+}
+
+function getTemp(t){ if(t<=0)return 25; if(t<=30)return 25+(95/30)*t; if(t<=70)return 120-(95/40)*(t-30); return 25+(95/30)*(t-70); }
+function isBulbOn(t,started){ return started && (t<30||t>=70) && getTemp(t) < THRESH; }
+function tx(t)   { return M.left+(t/MAX_T)*GW; }
+function ty(temp){ return M.top+GH-((temp-MIN_TEMP)/(MAX_TEMP-MIN_TEMP))*GH; }
+
+function drawGraph(upTo, started){
+  ctx.clearRect(0,0,LW,LH);
+  ctx.fillStyle="#f5f7fa"; ctx.fillRect(M.left,M.top,GW,GH);
+  ctx.strokeStyle="#bbb"; ctx.lineWidth=1; ctx.strokeRect(M.left,M.top,GW,GH);
+  ctx.strokeStyle="#e0e0e0"; ctx.lineWidth=1;
+  for(let t=0;t<=MAX_T;t+=10){ctx.beginPath();ctx.moveTo(tx(t),M.top);ctx.lineTo(tx(t),M.top+GH);ctx.stroke();}
+  for(let temp=MIN_TEMP;temp<=MAX_TEMP;temp+=25){ctx.beginPath();ctx.moveTo(M.left,ty(temp));ctx.lineTo(M.left+GW,ty(temp));ctx.stroke();}
+  ctx.strokeStyle="#c62828"; ctx.lineWidth=2; ctx.setLineDash([10,5]);
+  ctx.beginPath(); ctx.moveTo(M.left,ty(THRESH)); ctx.lineTo(M.left+GW,ty(THRESH)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle="#c62828"; ctx.font="bold 14px Arial"; ctx.textAlign="left";
+  ctx.fillText("טמפרטורת סף 120°C (הנורה נכבית)", M.left+GW-230, ty(THRESH)-8);
+  if(upTo>0 && started){
+    ctx.lineWidth=3; ctx.strokeStyle=GRAPH_COLOR;
+    ctx.beginPath(); ctx.moveTo(tx(0),ty(25));
+    for(let t=0.3;t<=upTo+0.01;t+=0.3){
+      const tt=Math.min(t,upTo);
+      ctx.lineTo(tx(tt),ty(getTemp(tt)));
+    }
+    ctx.stroke();
+    if(upTo<MAX_T){
+      const dx=tx(upTo),dy=ty(getTemp(upTo));
+      ctx.fillStyle=GRAPH_COLOR; ctx.beginPath(); ctx.arc(dx,dy,6,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle="white"; ctx.lineWidth=2; ctx.stroke();
+    }
+  }
+  ctx.strokeStyle="#333"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(M.left,M.top); ctx.lineTo(M.left,M.top+GH); ctx.lineTo(M.left+GW,M.top+GH); ctx.stroke();
+  ctx.fillStyle="#222"; ctx.font="bold 18px Arial"; ctx.textAlign="right";
+  for(let temp=MIN_TEMP;temp<=MAX_TEMP;temp+=25) ctx.fillText(temp,M.left-8,ty(temp)+6);
+  ctx.save(); ctx.translate(22,M.top+GH/2); ctx.rotate(-Math.PI/2);
+  ctx.textAlign="center"; ctx.fillStyle="#333";
+  const yLabel="טמפרטורת הנורה ‎(°C)";
+  let yFs=20; ctx.font=`bold ${yFs}px Arial`;
+  while(ctx.measureText(yLabel).width>GH-20&&yFs>11){yFs--;ctx.font=`bold ${yFs}px Arial`;}
+  ctx.fillText(yLabel,0,0); ctx.restore();
+  ctx.textAlign="center"; ctx.font="bold 18px Arial"; ctx.fillStyle="#222";
+  for(let t=0;t<=MAX_T;t+=10) ctx.fillText(t,tx(t),M.top+GH+22);
+  ctx.fillText("זמן (שניות)",M.left+GW/2,M.top+GH+52);
+  ctx.font="bold 18px Arial"; ctx.fillStyle="#1a2f5e"; ctx.textAlign="center";
+  ctx.fillText("גרף טמפרטורה מול זמן",M.left+GW/2,M.top-14);
+}
+
+function updateUI(t,started){
+  const temp=getTemp(t), on=isBulbOn(t,started);
+  document.getElementById("cur-temp").textContent=Math.round(temp)+"°C";
+  document.getElementById("time-display").textContent=Math.round(t)+" שנ׳";
+  const dot=document.getElementById("status-dot");
+  const label=document.getElementById("state-label");
+  const glass=document.getElementById("bulb-glass");
+  const halo=document.getElementById("halo");
+  const fil=document.getElementById("filament");
+  if(on){
+    dot.className="status-dot on"; label.textContent="הנורה דולקת";
+    glass.setAttribute("fill","url(#glowGrad)"); glass.setAttribute("stroke","#f9a825");
+    halo.setAttribute("opacity","0.3"); fil.setAttribute("stroke","#f9a825");
+  } else {
+    dot.className="status-dot"; label.textContent="הנורה כבויה";
+    glass.setAttribute("fill","url(#dimGrad)"); glass.setAttribute("stroke","#bbb");
+    halo.setAttribute("opacity","0"); fil.setAttribute("stroke","#bbb");
+  }
+}
+
+let curTime=0,animating=false,animId=null,lastTS=null,started=false;
+const SIM_SPEED=7;
+
+function animate(ts){
+  if(!lastTS)lastTS=ts;
+  curTime+=((ts-lastTS)/1000)*SIM_SPEED; lastTS=ts;
+  if(curTime>=MAX_T){
+    curTime=MAX_T; animating=false;
+    document.getElementById("play-text").textContent="הפעלה מחדש";
+    document.getElementById("play-icon").innerHTML="&#9664;";
+  }
+  drawGraph(curTime,started); updateUI(curTime,started);
+  if(animating) animId=requestAnimationFrame(animate);
+}
+
+function togglePlay(){
+  if(curTime>=MAX_T) resetSim();
+  if(!started) started=true;
+  animating=!animating;
+  const txt=document.getElementById("play-text");
+  const ico=document.getElementById("play-icon");
+  if(animating){
+    txt.textContent="השהייה"; ico.textContent="⏸";
+    lastTS=null; animId=requestAnimationFrame(animate);
+  } else {
+    txt.textContent="המשך"; ico.innerHTML="&#9664;";
+    cancelAnimationFrame(animId);
+  }
+}
+
+function resetSim(){
+  animating=false; started=false; cancelAnimationFrame(animId);
+  curTime=0; lastTS=null;
+  document.getElementById("play-text").textContent="הפעלה";
+  document.getElementById("play-icon").innerHTML="&#9664;";
+  drawGraph(0,false); updateUI(0,false);
+}
+
+function refit(){
+  fitCanvas();
+  drawGraph(animating||started?curTime:0, started);
+  updateUI(animating||started?curTime:0, started);
+}
+window.addEventListener("load", refit);
+// A `load`-time measurement can land before the embedding page (e.g. an
+// iframe whose own size is still settling) has finished layout, leaving the
+// canvas at its default 300x150 — re-measure a moment later and again on
+// any later resize (of the window OR, via ResizeObserver, of this container
+// itself — the iframe's own size can change without a window resize event).
+setTimeout(refit, 300);
+window.addEventListener("resize", refit);
+if (window.ResizeObserver) {
+  new ResizeObserver(refit).observe(document.querySelector(".container"));
+}
+</script>
+</body>
+</html>

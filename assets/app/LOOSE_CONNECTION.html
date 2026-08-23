@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מעבדת חקר: הצצה לארון החשמל</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: #e8eaed; display: flex; justify-content: center; padding: 12px; font-family: Arial, sans-serif; height: 100vh; overflow: hidden; }
+.wrapper { background: #fff; border-radius: 14px; padding: 14px; width: 100%; max-width: 100%; height: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; min-height: 0; }
+.hd { margin-bottom: 10px; direction: rtl; flex: 0 0 auto; }
+.hd h2 { font-size: 18px; font-weight: bold; color: #1a237e; }
+svg { display: block; width: 100%; flex: 1 1 auto; min-height: 0; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="hd">
+    <h2>מעבדת חקר: הצצה לארון החשמל</h2>
+  </div>
+  <svg id="svg" viewBox="0 0 760 520" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const svg = document.getElementById('svg');
+
+const BULBS = [
+  {id:1, x:95,  loose:true },
+  {id:2, x:195, loose:false},
+  {id:3, x:295, loose:true },
+  {id:4, x:395, loose:false},
+  {id:5, x:495, loose:true },
+];
+
+const PANEL_L=50, PANEL_T=148, PANEL_W=660, PANEL_H=335;
+const RED_Y=183, BLUE_Y=440, DIN_Y=318, TERM_Y=210;
+const BRK_T=225, BRK_H=88, BRK_W=66;
+const AMM_CX=678, AMM_CY=285, AMM_R=68;
+
+let needleVal=0, needleTarget=0, isLoose=false;
+let ltimer=0, lNext=15, activeId=null;
+
+// Flicker — 1,3,5. Bulb 3 uses much longer intervals.
+const fSt={1:1,3:1,5:1}, fTm={1:0,3:0,5:0}, fNx={1:55,3:200,5:44};
+
+function el(tag, a, txt) {
+  const n = document.createElementNS(NS, tag);
+  for (const [k,v] of Object.entries(a)) n.setAttribute(k, v);
+  if (txt !== undefined) n.textContent = txt;
+  return n;
+}
+
+function build() {
+  svg.innerHTML = '';
+
+  // Wall
+  svg.appendChild(el('rect',{x:0,y:0,width:760,height:520,fill:'#4a4a4a'}));
+
+  // Ceiling board
+  svg.appendChild(el('rect',{x:30,y:18,width:580,height:108,rx:5,fill:'#c8b89a',stroke:'#a08060','stroke-width':2}));
+  for (let y=28; y<120; y+=9)
+    svg.appendChild(el('line',{x1:30,y1:y,x2:610,y2:y,stroke:'#b09070','stroke-width':0.6,opacity:0.5}));
+
+  // Panel box
+  svg.appendChild(el('rect',{x:PANEL_L,y:PANEL_T,width:PANEL_W,height:PANEL_H,rx:5,fill:'#616161',stroke:'#888','stroke-width':2.5}));
+  svg.appendChild(el('rect',{x:PANEL_L+9,y:PANEL_T+9,width:PANEL_W-18,height:PANEL_H-18,rx:3,fill:'#4e4e4e'}));
+  [[PANEL_L+15,PANEL_T+18],[PANEL_L+PANEL_W-15,PANEL_T+18],
+   [PANEL_L+15,PANEL_T+PANEL_H-18],[PANEL_L+PANEL_W-15,PANEL_T+PANEL_H-18]
+  ].forEach(([sx,sy]) => {
+    svg.appendChild(el('circle',{cx:sx,cy:sy,r:5,fill:'#999',stroke:'#555','stroke-width':1}));
+    svg.appendChild(el('line',{x1:sx-3,y1:sy,x2:sx+3,y2:sy,stroke:'#444','stroke-width':1.5}));
+  });
+
+  // Red bus bar (L)
+  svg.appendChild(el('rect',{x:68,y:RED_Y,width:540,height:11,rx:3,fill:'#c62828',stroke:'#b71c1c','stroke-width':1}));
+  svg.appendChild(el('text',{x:72,y:RED_Y+9,fill:'#ffcdd2','font-size':8,'font-weight':'bold'},'L'));
+
+  // Blue bus bar (N)
+  svg.appendChild(el('rect',{x:68,y:BLUE_Y,width:540,height:11,rx:3,fill:'#1565c0',stroke:'#0d47a1','stroke-width':1}));
+  svg.appendChild(el('text',{x:72,y:BLUE_Y+9,fill:'#bbdefb','font-size':8,'font-weight':'bold'},'N'));
+
+  // DIN rail
+  svg.appendChild(el('rect',{x:68,y:DIN_Y,width:490,height:18,rx:2,fill:'#9e9e9e',stroke:'#757575','stroke-width':1.5}));
+  svg.appendChild(el('rect',{x:68,y:DIN_Y+4,width:490,height:10,rx:1,fill:'#c0c0c0'}));
+  for (let sx=82; sx<555; sx+=22)
+    svg.appendChild(el('rect',{x:sx,y:DIN_Y+5,width:9,height:8,rx:1,fill:'#d8d8d8',stroke:'#aaa','stroke-width':0.5}));
+
+  buildAmmeter();
+  BULBS.forEach(b => buildUnit(b));
+}
+
+function buildUnit(b) {
+  const cx = b.cx = b.x;
+
+  // Black wire: bulb base → terminal (drawn behind badge/terminal)
+  svg.appendChild(el('line',{x1:cx,y1:97,x2:cx,y2:TERM_Y+12,stroke:'#111','stroke-width':4}));
+  // Red wire: red bus → breaker top
+  svg.appendChild(el('line',{x1:cx,y1:RED_Y+11,x2:cx,y2:BRK_T,stroke:'#e53935','stroke-width':4}));
+  // Blue wire: breaker bottom → blue bus
+  svg.appendChild(el('line',{x1:cx,y1:BRK_T+BRK_H,x2:cx,y2:BLUE_Y,stroke:'#1e88e5','stroke-width':4}));
+
+  // Breaker body
+  const bx = cx - BRK_W/2;
+  svg.appendChild(el('rect',{x:bx,y:BRK_T,width:BRK_W,height:BRK_H,rx:4,fill:'#efefef',stroke:'#bbb','stroke-width':1.5}));
+  svg.appendChild(el('rect',{x:bx+4,y:BRK_T+4,width:BRK_W-8,height:BRK_H-8,rx:2,fill:'#e4e4e4'}));
+  svg.appendChild(el('rect',{x:cx-13,y:BRK_T+9,width:26,height:46,rx:5,fill:'#2e2e2e',stroke:'#111','stroke-width':1}));
+  svg.appendChild(el('rect',{x:cx-10,y:BRK_T+11,width:20,height:22,rx:4,fill:'#e0e0e0',stroke:'#bbb','stroke-width':0.8}));
+  svg.appendChild(el('text',{x:cx,y:BRK_T+70,'text-anchor':'middle',fill:'#444','font-size':10,'font-weight':'bold'},'16A'));
+  [-11,11].forEach(dx => {
+    svg.appendChild(el('circle',{cx:cx+dx,cy:BRK_T+BRK_H-7,r:5,fill:'#aaa',stroke:'#777','stroke-width':1}));
+    svg.appendChild(el('line',{x1:cx+dx,y1:BRK_T+BRK_H-10,x2:cx+dx,y2:BRK_T+BRK_H-4,stroke:'#555','stroke-width':1.5}));
+  });
+
+  // Clickable group
+  const cg = document.createElementNS(NS,'g');
+  cg.style.cursor = 'pointer';
+  cg.setAttribute('tabindex','0');
+  cg.setAttribute('role','button');
+  cg.setAttribute('aria-label','בדוק חיבור '+b.id);
+  cg.addEventListener('click', () => clickTerm(b.id, b.loose));
+  cg.addEventListener('keydown', ev => { if(ev.key==='Enter'||ev.key===' ') clickTerm(b.id,b.loose); });
+
+  const tc = el('circle',{cx:cx,cy:TERM_Y,r:12,fill:'#546e7a',stroke:'#78909c','stroke-width':2});
+  tc.id = 'tc'+b.id; cg.appendChild(tc);
+  cg.appendChild(el('line',{x1:cx-7,y1:TERM_Y,x2:cx+7,y2:TERM_Y,stroke:'#263238','stroke-width':2.5}));
+
+  const nb = el('rect',{x:cx-17,y:PANEL_T+25,width:34,height:32,rx:5,fill:'#1565c0'});
+  nb.id = 'nb'+b.id; cg.appendChild(nb);
+  const nt = el('text',{x:cx,y:PANEL_T+47,'text-anchor':'middle',fill:'#fff','font-size':22,'font-weight':'bold'});
+  nt.textContent = String(b.id); cg.appendChild(nt);
+  svg.appendChild(cg);
+
+  // Bulb (same appearance for all flickering — 1,3,5 all start bright)
+  const glow = el('circle',{cx:cx,cy:68,r:30,fill:'#fffde7',opacity:'0.3'});
+  glow.id = 'bg'+b.id; svg.appendChild(glow);
+
+  const glass = el('ellipse',{cx:cx,cy:62,rx:20,ry:22,fill:'#fff9c4',stroke:'#f9a825','stroke-width':1.5});
+  glass.id = 'gl'+b.id; svg.appendChild(glass);
+
+  svg.appendChild(el('rect',{x:cx-10,y:83,width:20,height:14,rx:2,fill:'#8d6e63',stroke:'#5d4037','stroke-width':1}));
+  svg.appendChild(el('rect',{x:cx-8,y:79,width:16,height:7,rx:1,fill:'#795548'}));
+
+  const fil = el('path',{d:`M${cx-7},61 Q${cx-3},53 ${cx},58 Q${cx+3},50 ${cx+7},61`,fill:'none',stroke:'#ef6c00','stroke-width':1.8});
+  fil.id = 'fi'+b.id; svg.appendChild(fil);
+
+  svg.appendChild(el('text',{x:cx,y:108,'text-anchor':'middle',fill:'#2a1500','font-size':12,'font-weight':'bold'},String(b.id)));
+}
+
+function buildAmmeter() {
+  const cx=AMM_CX, cy=AMM_CY, r=AMM_R;
+
+  svg.appendChild(el('rect',{x:cx-r-12,y:cy-r-10,width:(r+12)*2,height:2*r+20+60,rx:8,fill:'#5d5d5d',stroke:'#3a3a3a','stroke-width':2.5}));
+  svg.appendChild(el('rect',{x:cx-r-4,y:cy-r-3,width:(r+4)*2,height:2*r+6+50,rx:5,fill:'#383838'}));
+  svg.appendChild(el('circle',{cx,cy,r,fill:'#f7f4e8',stroke:'#ddd','stroke-width':1}));
+
+  // Scale arc
+  const arcPath = (()=>{
+    const sa=210*Math.PI/180, ea=330*Math.PI/180, ar=r-7;
+    const pts=[];
+    for (let a=sa; a<=ea; a+=0.05) pts.push(`${cx+ar*Math.cos(a)},${cy+ar*Math.sin(a)}`);
+    return 'M'+pts.join(' L');
+  })();
+  svg.appendChild(el('path',{d:arcPath,fill:'none',stroke:'#888','stroke-width':0.8}));
+
+  for (let i=0; i<=5; i++) {
+    const ang=(210+i*24)*Math.PI/180;
+    svg.appendChild(el('line',{x1:cx+(r-6)*Math.cos(ang),y1:cy+(r-6)*Math.sin(ang),x2:cx+(r-18)*Math.cos(ang),y2:cy+(r-18)*Math.sin(ang),stroke:'#333','stroke-width':2}));
+    svg.appendChild(el('text',{x:cx+(r-26)*Math.cos(ang),y:cy+(r-26)*Math.sin(ang)+3,'text-anchor':'middle',fill:'#222','font-size':10,'font-weight':'bold'},String(i)));
+    if (i<5) for (let j=1; j<=4; j++) {
+      const ma=(210+(i+j/5)*24)*Math.PI/180;
+      svg.appendChild(el('line',{x1:cx+(r-8)*Math.cos(ma),y1:cy+(r-8)*Math.sin(ma),x2:cx+(r-14)*Math.cos(ma),y2:cy+(r-14)*Math.sin(ma),stroke:'#666','stroke-width':0.8}));
+    }
+  }
+
+  svg.appendChild(el('text',{x:cx,y:cy+12,'text-anchor':'middle',fill:'#222','font-size':14,'font-weight':'bold'},'A'));
+
+  const ang0=210*Math.PI/180;
+  const ndl=el('line',{x1:cx,y1:cy,x2:cx+(r-8)*Math.cos(ang0),y2:cy+(r-8)*Math.sin(ang0),stroke:'#d32f2f','stroke-width':3,'stroke-linecap':'round'});
+  ndl.id='needle'; svg.appendChild(ndl);
+  svg.appendChild(el('circle',{cx,cy,r:5,fill:'#555'}));
+  svg.appendChild(el('circle',{cx,cy,r:2.5,fill:'#d32f2f'}));
+
+  // Label plate
+  svg.appendChild(el('rect',{x:cx-62,y:cy+r+12,width:124,height:26,rx:4,fill:'#1a1a1a',stroke:'#555','stroke-width':1}));
+  svg.appendChild(el('text',{x:cx,y:cy+r+29,'text-anchor':'middle',fill:'#ffffff','font-size':16,'font-weight':'bold'},'מד זרם (אמפר)'));
+}
+
+function updateNeedle(val) {
+  val = Math.max(0, Math.min(5, val));
+  const ang=(210+val*24)*Math.PI/180;
+  const n=document.getElementById('needle');
+  if (n) {
+    n.setAttribute('x2', AMM_CX+(AMM_R-8)*Math.cos(ang));
+    n.setAttribute('y2', AMM_CY+(AMM_R-8)*Math.sin(ang));
+  }
+}
+
+function resetHighlights() {
+  BULBS.forEach(b => {
+    const tc=document.getElementById('tc'+b.id);
+    const nb=document.getElementById('nb'+b.id);
+    if(tc) tc.setAttribute('fill','#546e7a');
+    if(nb) nb.setAttribute('fill','#1565c0');
+  });
+}
+
+function clickTerm(id, loose) {
+  if (activeId === id) {
+    // Deselect: return to blue, needle drifts to 0
+    activeId = null;
+    isLoose = false;
+    needleTarget = 0;
+    resetHighlights();
+    return;
+  }
+  activeId=id; isLoose=loose; ltimer=0;
+  needleTarget = loose ? Math.random()*3.5 : 2.0;
+  if (loose) lNext = 10+Math.random()*15;
+  BULBS.forEach(b => {
+    const tc=document.getElementById('tc'+b.id);
+    const nb=document.getElementById('nb'+b.id);
+    if(tc) tc.setAttribute('fill', b.id===id ? '#e65100' : '#546e7a');
+    if(nb) nb.setAttribute('fill', b.id===id ? '#e65100' : '#1565c0');
+  });
+}
+
+function loop() {
+  try {
+    // Ammeter needle
+    if (activeId !== null) {
+      if (isLoose) {
+        ltimer++;
+        if (ltimer >= lNext) {
+          needleTarget = Math.random()*4.2;
+          lNext = 8+Math.random()*18;
+          ltimer = 0;
+        }
+        needleVal += (needleTarget - needleVal) * 0.22;
+      } else {
+        needleVal += (needleTarget + (Math.random()-0.5)*0.07 - needleVal) * 0.12;
+      }
+    } else {
+      // No active terminal — needle drifts smoothly back to 0
+      needleVal += (0 - needleVal) * 0.06;
+    }
+    updateNeedle(needleVal);
+
+    // Flicker — bulbs 1, 3, 5
+    // Bulb 3 uses much longer intervals (slow flicker)
+    [1,3,5].forEach(id => {
+      fTm[id]++;
+      if (fTm[id] >= fNx[id]) {
+        fTm[id] = 0;
+        fNx[id] = id===3
+          ? 180+Math.floor(Math.random()*200)  // bulb 3: ~3–6 s between flickers
+          : 45+Math.floor(Math.random()*65);   // bulbs 1,5: ~0.75–1.8 s
+        fSt[id] = fSt[id]>0.6 ? 0.25 : 1.0;
+      }
+      const br=fSt[id];
+      const gl=document.getElementById('gl'+id);
+      const bg=document.getElementById('bg'+id);
+      const fi=document.getElementById('fi'+id);
+      if(gl) gl.setAttribute('fill', br>0.5 ? '#fff9c4' : '#ccc080');
+      if(bg) bg.setAttribute('opacity', (br*0.3).toFixed(2));
+      if(fi) fi.setAttribute('stroke', br>0.5 ? '#ef6c00' : '#7a5c00');
+    });
+
+  } catch(e) { console.warn('loop err:', e); }
+
+  requestAnimationFrame(loop);
+}
+
+build();
+loop();
+</script>
+</body>
+</html>
