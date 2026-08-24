@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>דוח בקרת נגישות — תעלומה בשכונה (הבהובי רעיונות)</title>
+<style>
+  :root { --blocker:#d12; --warning:#e67e00; --polish:#1769d1; }
+  body { font-family:"Assistant","Segoe UI",Arial,sans-serif; line-height:1.65; max-width:1000px;
+         margin:0 auto; padding:24px; color:#222; background:#fafafa; }
+  h1 { font-size:1.7rem; border-bottom:2px solid #ccc; padding-bottom:8px; }
+  h2 { font-size:1.3rem; margin-top:30px; }
+  h3 { font-size:1.1rem; margin-top:26px; background:#eef1f5; padding:6px 12px; border-radius:6px;
+       border-inline-start:5px solid #6b7a90; }
+  table { border-collapse:collapse; width:100%; margin:8px 0 18px; background:#fff; font-size:0.95rem; }
+  th,td { border:1px solid #d6d6d6; padding:8px 10px; text-align:right; vertical-align:top; }
+  th { background:#33405a; color:#fff; font-weight:600; }
+  th:nth-child(1),td:nth-child(1) { width:16%; }
+  th:nth-child(2),td:nth-child(2) { width:30%; }
+  th:nth-child(3),td:nth-child(3) { width:30%; }
+  th:nth-child(4),td:nth-child(4) { width:24%; }
+  tr.blocker td:first-child { border-inline-start:5px solid var(--blocker); background:#fdecec; }
+  tr.warning td:first-child { border-inline-start:5px solid var(--warning); background:#fff6e9; }
+  tr.polish  td:first-child { border-inline-start:5px solid var(--polish);  background:#eaf2fd; }
+  code { background:#eee; padding:1px 5px; border-radius:4px; font-family:Consolas,monospace; direction:ltr; display:inline-block; }
+  pre { background:#1e2433; color:#e6e6e6; padding:14px 16px; border-radius:8px; overflow:auto;
+        direction:ltr; text-align:left; margin:10px 0; line-height:1.5; }
+  pre code { background:none; color:inherit; padding:0; display:block; white-space:pre; font-size:0.86rem; }
+  details.solution { border:1px solid #c9d2e0; border-radius:8px; margin:12px 0; background:#f3f6fb; }
+  details.solution > summary { cursor:pointer; padding:10px 14px; font-weight:700; color:#23406e;
+        background:#e7eef9; border-radius:8px; user-select:none; }
+  details.solution[open] > summary { border-radius:8px 8px 0 0; border-bottom:1px solid #c9d2e0; }
+  details.solution > :not(summary) { margin-inline:14px; }
+  details.solution > pre { margin:12px 14px; }
+  blockquote { color:#555; border-inline-start:3px solid #bbb; margin:12px 0; padding:4px 12px; font-style:italic; }
+  ul { padding-inline-start:20px; }
+  strong { color:#000; }
+</style>
+</head>
+<body>
+<h1>דוח בקרת נגישות — תעלומה בשכונה (הבהובי רעיונות)</h1>
+<p class=""><strong>מודול:</strong> <code>learning-demo/</code> · <strong>קבצים:</strong> index.html (817 שורות) / script.js (54,560 תווים) / styles.css (50,220 תווים) · <strong>תאריך:</strong> 2026-08-23</p>
+<p class=""><strong>תקן:</strong> WCAG 2.1 AA + ת"י 5568 · <strong>שיטה:</strong> <code>scan.py</code> (סטטי, דטרמיניסטי) + קריאת-קוד שיפוטית מעמיקה (JS logic, CSS rules, DOM structure) על פני <strong>28 המסכים</strong> (<code>data-screen="1"</code> עד <code>"28"</code>)</p>
+<p class="blocker"><strong>כיסוי:</strong> 28/28 מסכים נסרקו במקור ה-HTML הסטטי (כל התוכן במודול הזה מוזרק לתוך <code>index.html</code> מראש, ולא נבנה דינמית ע"י JS מלבד שינויי class/state — כך ש-100% מהמארקאפ קיים בקובץ הסטטי וניתן היה לבדוק כל מסך) · <strong>סיכום במקור (2026-08-23):</strong> 🔴 <strong>9</strong> חוסמים · 🟠 <strong>7</strong> אזהרות · 🔵 <strong>3</strong> ליטוש</p>
+<blockquote>## ✅ עדכון 2026-08-24 — תוקנו כל הממצאים שלא דורשים שינוי-נראות</blockquote>
+<blockquote>לפי בקשת המפתח/ת, בוצעו תיקוני קוד (HTML/CSS/JS) לכל ממצא שניתן לתקן **מבלי לשנות את המראה החזותי</blockquote>
+<blockquote>הקיים<strong> של הלומדה (ראה שורה "✅ תוקן ..." בכל ממצא רלוונטי למטה). </strong>סיכום לאחר תיקון: 🔴 5 חוסמים ·</blockquote>
+<blockquote>🟠 4 אזהרות · 🔵 1 ליטוש** — הנותרים מפורטים למטה, וכולם דורשים החלטת-עיצוב חזותית (צבע/אייקון/רכיב</blockquote>
+<blockquote>נראה חדש) או החלטת-תוכן/ארכיטקטורה, ולכן לא נגעתי בהם. <code>scan.py</code> הורץ מחדש לאחר התיקונים ומאשר: #11</blockquote>
+<blockquote>עבר מ"46 מתוך 56 בלי tabindex" ל-<strong>"0 מתוך 56 בלי tabindex"</strong>, ו-#3/#4/#30 לא מופיעים יותר בפלט הסורק.</blockquote>
+<blockquote></blockquote>
+<blockquote><strong>נותר לתקן (דורש שינוי-נראות, לא בוצע):</strong></blockquote>
+<blockquote>- #23 ניגודיות (2 ממצאים ודאיים) — דורש שינוי-צבע.</blockquote>
+<blockquote>- #25 (א)+(ב) צבע-כסמן-בלעדי — דורש הוספת אייקון ✓/✗ נראה.</blockquote>
+<blockquote>- #8/#10 וידאו-רקע ללא עצירה (מסך 8) — כפתור-עצירה נגיש חייב להיות נראה כשמתמקדים בו.</blockquote>
+<blockquote>- #9 כתוביות ל-<code>&lt;track&gt;</code> native, #26 ארכיטקטורת-קנבס/reflow, #32 הצהרת-נגישות — דורשים החלטת</blockquote>
+<blockquote>  תוכן/ארכיטקטורה, לא רק markup.</blockquote>
+<blockquote>## ⚠️ מגבלת בדיקה קריטית — נא לקרוא לפני השימוש בדוח</blockquote>
+<blockquote>**סביבת ההרצה של דוח זה לא כללה כלי דפדפן/preview חיים (<code>preview_*</code>) ולא הצלחתי להזריק axe-core, לביים</blockquote>
+<blockquote>Tab-walk אמיתי, או למדוד ניגודיות מחושבת (<code>getComputedStyle</code>) על ה-DOM החי.** לכן, בשונה מהמתודולוגיה</blockquote>
+<blockquote>המלאה של סקיל זה (שדורשת גם ביקורת דינמית ב-preview), <strong>דוח זה מבוסס על:</strong></blockquote>
+<blockquote>1. סריקה דטרמיניסטית (<code>scan.py</code>) על index.html/styles.css/script.js.</blockquote>
+<blockquote>2. קריאה שיפוטית מעמיקה של כל 28 המסכים ב-HTML, וקריאת מלוא הלוגיקה הרלוונטית ב-script.js (ניווט,</blockquote>
+<blockquote>   מאזיני-מקלדת, ניהול-מצב ARIA, ניהול-פוקוס, מודלים, גרירה, וידאו/כתוביות) כדי להסיק מה *בפועל* יקרה</blockquote>
+<blockquote>   בדפדפן חי, ואימות הדדי בין ה-HTML למאזיני ה-JS (למשל: איתור כל מאזיני ה-<code>keydown</code> הקיימים בקובץ</blockquote>
+<blockquote>   ואימות שהם *לא* מכסים רכיבי <code>role="button"</code> מסוימים).</blockquote>
+<blockquote>3. <strong>בדיקות שדורשות DOM חי ולא ניתן היה לבצע בפועל</strong> (מסומנות "❓ לא נבדק דינמית" בטבלת-הכיסוי):</blockquote>
+<blockquote>   - ניגודיות מחושבת בפועל (רקעי-gradient/תמונה עשויים לשנות את התוצאה בפועל).</blockquote>
+<blockquote>   - סדר-Tab אמיתי וחיווי-פוקוס נראה בפועל על כל רכיב.</blockquote>
+<blockquote>   - reflow בפועל ב-320px / זום 200% (ההערכה כאן היא ניתוח-ארכיטקטורה מהקוד, לא מדידה).</blockquote>
+<blockquote>   - axe-core (מכסה ~30–40% מהבעיות המכניות שהניתוח הידני-שיפוטי לא תמיד תופס).</blockquote>
+<blockquote></blockquote>
+<blockquote>**המשמעות: יש להריץ סבב-אימות דינמי בדפדפן (axe-core + Tab-walk + ניגודיות מחושבת + reflow) לפני</blockquote>
+<blockquote>אישור-נגישות סופי.** כל הממצאים להלן מבוססי-קוד ומצוטטים במדויק, אך רשימת ה-❓ בטבלת-הכיסוי בתחתית</blockquote>
+<blockquote>אינה "תקין" — היא "לא נבדק". <strong>אישור-נגישות סופי דורש גם בדיקה עם קורא-מסך אנושי (NVDA/VoiceOver).</strong></blockquote>
+<p class="">---</p>
+<h2>ממצאים לפי קטגוריה</h2>
+<h3>א. מבנה ושפת המסמך</h3>
+<table>
+<thead><tr><th>סוג הבעיה</th><th>מיקום (file:line)</th><th>ציטוט / מה נמצא</th><th>המלצת תיקון</th><th>מה הפתרון פותר</th></tr></thead>
+<tbody>
+<tr class=""><td>✅ תוקן — #3 היעדר כותרות סמנטיות</td><td>כל 28 המסכים ב-<code>index.html</code> (לדוגמה <code>.q-title</code> ב-index.html:118,195,261,298,335,372,446,484,576,606,658,745; <code>.intro-title-line1/2</code> ב-index.html:16-17)</td><td>~~אין תג <code>&lt;h1&gt;</code>–<code>&lt;h6&gt;</code> יחיד בכל הקובץ~~ — <strong>תוקן:</strong> <code>.intro-title-line2</code> הוא כעת <code>&lt;h1&gt;</code> (כותרת המודול, מסך 1), וכל 13 מופעי <code>.q-title</code> הם כעת <code>&lt;h2&gt;</code> — ה-CSS הקיים לכל class כבר קבע <code>font-size</code>/<code>font-weight</code>/<code>margin</code> מפורשים, כך שהמראה החזותי לא השתנה</td><td>—</td><td>ניווט-לפי-כותרות בקורא-מסך עובד ל-14 כותרות (WCAG 1.3.1 A)</td></tr>
+<tr class=""><td>✅ תוקן — #4 אין landmark ראשי</td><td><code>index.html:10</code> (<code>&lt;div id="app"&gt;</code>)</td><td>~~אין <code>&lt;main&gt;</code>/<code>role</code> תואם~~ — <strong>תוקן:</strong> נוסף <code>role="main"</code> ל-<code>#app</code> (attribute בלבד, ללא השפעה על רינדור)</td><td>—</td><td>קורא-מסך יכול לדלג ישירות לתוכן העיקרי (WCAG 1.3.1 A)</td></tr>
+<tr class=""><td>✅ #1 שפת מסמך</td><td><code>index.html:2</code></td><td><code>&lt;html lang="he" dir="rtl"&gt;</code> — תקין</td><td>—</td><td>—</td></tr>
+<tr class=""><td>✅ #2 כותרת דף</td><td><code>index.html:6</code></td><td><code>&lt;title&gt;תעלומה בשכונה — הבהובי רעיונות&lt;/title&gt;</code> — מתארת וייחודית</td><td>—</td><td>—</td></tr>
+<tr class=""><td>✅ #5 מזהים כפולים</td><td>כל הקובץ</td><td>לא נמצאו <code>id</code> כפולים (למרות ~11 מסכי-שאלה החולקים מבנה זהה, ה-<code>id</code> שלהם ייחודי לכל מסך: <code>q-check-9</code>, <code>q-check-12</code> וכו')</td><td>—</td><td>—</td></tr>
+</tbody></table>
+<h3>ב. תמונות ומדיה</h3>
+<table>
+<thead><tr><th>סוג הבעיה</th><th>מיקום (file:line)</th><th>ציטוט / מה נמצא</th><th>המלצת תיקון</th><th>מה הפתרון פותר</th></tr></thead>
+<tbody>
+<tr class="blocker"><td>🔴 #8 תוכן-נע רץ ללא הגבלת-זמן/עצירה</td><td><code>index.html:169</code> — <code>&lt;video class="screen-bg-video" src="assets/videos/video_page_8.mp4" autoplay muted loop playsinline&gt;&lt;/video&gt;</code>, ומופעל-מחדש תכנותית בכל כניסה למסך ב-<code>script.js:336-345</code> (<code>resetScreen8</code>: <code>video.currentTime=0; video.play()</code>)</td><td>וידאו-רקע דקורטיבי במסך 8 מתנגן אוטומטית, ב-<strong>לופ אינסופי</strong>, ואין שום כפתור/פקד לעצירה או השהיה שלו בכל המודול</td><td><strong>הוסיפו</strong> כפתור "השהה רקע" נגיש (<code>aria-label</code>), או <strong>הגבילו</strong> את הלופ למספר חזרות סופי שנפסק אוטומטית, או <strong>הסירו</strong> <code>loop</code> והחליפו בפריים אחרון קבוע</td><td>תוכן נע לא ירדוף משתמשים רגישי-תנועה/ריכוז לאורך כל זמן השהייה במסך (WCAG 2.2.2 A — חובה גם בת"י 5568)</td></tr>
+<tr class="warning"><td>🟠 #10 autoplay של מדיה</td><td><code>index.html:169</code></td><td>ה-<code>autoplay</code> על הווידאו הנ"ל (מוצמד ל-<code>muted</code> — כך שלא מפר את 1.4.2 שעניינה אודיו, אך מחריף את #8 לעיל)</td><td><strong>ראו המלצת #8</strong> — הבעיה המעשית כאן היא העדר-עצירה, לא האודיו (שמושתק)</td><td>— (ראו #8)</td></tr>
+<tr class="polish"><td>🔵 #9 כתוביות-וידאו — לא ב-<code>&lt;track&gt;</code> תקני</td><td><code>index.html:33,101,159,223,410,640</code> (שישה תגי <code>&lt;video&gt;</code>) + <code>script.js:172-231</code> (<code>VIDEO_CAPTIONS</code>/<code>setupVideoCaptions</code>)</td><td><strong>בניגוד לדגל האוטומטי של הסורק</strong> — נמצא בפועל מנגנון-כתוביות מותאם: <code>VIDEO_CAPTIONS</code> מכיל cues מתוזמנים (start/end/טקסט) לכל 6 מסכי-הווידאו (2,5,7,10,16,24), ומוזרקים ל-<code>.video-caption p</code> בזמן-אמת לפי <code>timeupdate</code>. זו <strong>חלופה פונקציונלית סבירה</strong> לכתוביות, אך: (1) לא ניתנת-לכיבוי/הפעלה ע"י המשתמש (אין כפתור CC), (2) לא נחשפת ל-API-נגישות של הדפדפן כ-<code>&lt;track&gt;</code> אמיתי</td><td><strong>שקלו</strong> להמיר ל-<code>&lt;track kind="captions" srclang="he"&gt;</code> אמיתי (מאפשר כיבוי ע"י המשתמש ותאימות-נגישות מובנית), או להוסיף כפתור-הצג/הסתר-כתוביות למנגנון הקיים</td><td>שוויון-בקרה על הכתוביות ותאימות טובה יותר לכלי-נגישות (WCAG 1.2.2 A)</td></tr>
+<tr class=""><td>✅ #6 טקסט חלופי (alt)</td><td>כל 28 המסכים</td><td>נבדקו כל תגי ה-<code>&lt;img&gt;</code> בקובץ: תמונות דקורטיביות (<code>Background*.jpg/.jpeg</code>, <code>textbox1*.png</code>, אייקוני <code>sim-reopen-btn</code>) מקבלות <code>alt=""</code> נכון; תמונות תוכניות (<code>q3_picture.png</code> ב-index.html:273-274,310-311,347-348,384-385, <code>q4_picture.png</code> ב-index.html:459-460,496-497) מקבלות alt מתאר-נתונים מלא (למשל "גרף קווי המציג... עולה עד ל-120 מעלות... יורדת בהדרגה עד ל-25...") הכולל את הערכים המספריים הנדרשים לפתרון השאלה — לא רק תיאור טופוגרפי</td><td>—</td><td>—</td></tr>
+<tr class=""><td>➖ #7 טקסט מהותי בתוך תמונה — לא ניתן לאימות מלא</td><td>תמונות תוכן (<code>q3_picture.png</code>, <code>q4_picture.png</code>, <code>q2_picture.png</code>, <code>q7_picture.png</code>)</td><td>לא בוצעה בדיקה ויזואלית של תוכן הפיקסלים בפועל (מחוץ לתחום ניתוח-קוד); אולם alt-הטקסט הקיים (#6) כבר משכפל את הערכים המספריים המהותיים בטקסט חי, מה שממתן את הסיכון</td><td><strong>מומלץ</strong>: אימות ויזואלי חד-פעמי שאין בתמונות טקסט/נתון נוסף שלא מופיע ב-alt</td><td>—</td></tr>
+<tr class=""><td>➖ #8 (GIF מונפש) — לא רלוונטי</td><td>—</td><td>לא נמצא אף קובץ <code>.gif</code> בתיקיית <code>assets/</code> או הפניה ל-<code>.gif</code> בקוד</td><td>—</td><td>—</td></tr>
+</tbody></table>
+<h3>ג. מקלדת ופוקוס — הליבה הקריטית ללומדה</h3>
+<table>
+<thead><tr><th>סוג הבעיה</th><th>מיקום (file:line)</th><th>ציטוט / מה נמצא</th><th>המלצת תיקון</th><th>מה הפתרון פותר</th></tr></thead>
+<tbody>
+<tr class=""><td>✅ תוקן — #11 (א) <code>.q-opt</code> היה בלתי-נגיש למקלדת כליל</td><td><code>index.html</code> — <strong>46 מופעים</strong> ב-11 מסכי-שאלה (9,12,13,14,15,18,19,21,22,25,27)</td><td>~~<code>&lt;div class="q-opt"&gt;</code> בלי <code>tabindex</code>/<code>role</code>, בלי מאזין-מקלדת~~ — <strong>תוקן:</strong> כל 46 האופציות קיבלו <code>role="radio"</code>/<code>"checkbox"</code> (לפי single/multi), <code>tabindex="0"</code>, <code>aria-checked</code> מסונכרן חי (ב-<code>qSelect</code>/<code>qMarkOptions</code>/<code>qEnter</code>), ועטיפת <code>.q-answers</code> קיבלה <code>role="radiogroup"</code>/<code>"group"</code>. מאזין <code>keydown</code> משותף חדש מפעיל Enter/Space כ-click. <code>scan.py</code> מאשר "0 מתוך 56 בלי tabindex"</td><td>—</td><td>11 מתוך 27 מסכי-תוכן הפכו לפתירים במקלדת/קורא-מסך (WCAG 2.1.1 A + 4.1.2 A)</td></tr>
+<tr class=""><td>✅ תוקן — #11 (ב) <code>.rtg-tile-round</code>/<code>.rtg-flipcard</code> — ARIA תקין אך לא הופעל במקלדת</td><td><code>index.html</code> — 10 מופעים (מסכים 4, 20)</td><td>~~<code>role="button"</code> על <code>&lt;div&gt;</code> לא מקבל Enter/Space אוטומטית, ואין מאזין ב-JS שמפעיל <code>rtgClick</code>~~ — <strong>תוקן:</strong> מאזין <code>keydown</code> גלובלי חדש (<code>script.js</code>) מפעיל <code>.click()</code> על כל <code>role="button"/"radio"/"checkbox"</code> ב-Enter/Space</td><td>—</td><td>10 כרטיסים במסכי-מפתח (4, 20) ניתנים-להפעלה במקלדת (WCAG 2.1.1 A)</td></tr>
+<tr class=""><td>✅ תוקן — #33 גרירה ללא חלופת-מקלדת (הייתה הבדיקה הקריטית ביותר)</td><td><code>index.html</code> (6 כרטיסי-מקור, 6 אזורי-שחרור, מסך 26) + <code>script.js</code> (<code>ddqKeyPick</code>/<code>ddqKeyDrop</code>)</td><td>~~HTML5 drag-native בלעדי, ללא <code>tabindex</code>/<code>role</code>/<code>aria-label</code>, ללא מסלול חלופי~~ — <strong>תוקן:</strong> כל כרטיס קיבל <code>role="button"</code> + <code>tabindex="0"</code> + <code>aria-label</code> דינמי; זרימת מקלדת מלאה — Enter על כרטיס = "הרמה" (עם <code>.selected</code> — סטייל שהיה כבר קיים ב-CSS ולא בשימוש), Enter על תא ריק = "הצבה", עם הכרזות ב-<code>aria-live</code> דרך אזור-סטטוס חדש ומוסתר-ויזואלית (<code>#a11y-status</code>, <code>.sr-only</code>)</td><td>—</td><td>שאלה 8 פתירה כעת במקלדת/קורא-מסך (WCAG 2.1.1 A + 4.1.2 A)</td></tr>
+<tr class=""><td>✅ תוקן — #12 מודלים נפתחו "שקטים" — בלי ניתוב-פוקוס/לכידה</td><td><code>index.html</code> (<code>#feedback-popup</code>, <code>#img-zoom-modal</code>, <code>#sim-reopen-popup</code>) + <code>script.js</code></td><td>~~אין <code>.focus()</code> בכל הקובץ; אין לכידת-Tab~~ — <strong>תוקן:</strong> נוספו <code>role="alertdialog"/"dialog"</code> + <code>aria-modal="true"</code> + <code>tabindex="-1"</code>; פונקציות <code>openOverlayFocus</code>/<code>returnOverlayFocus</code> מעבירות פוקוס לתוך המודל בפתיחה ומחזירות לכפתור-הפותח בסגירה; מאזין ה-<code>keydown</code> הגלובלי לוכד Tab בתוך המודל הפתוח</td><td>—</td><td>קורא-מסך ומשתמש-מקלדת יודעים שמודל נפתח ולא "נעלמים" ממנו (WCAG 2.1.2 A + 2.4.3 A)</td></tr>
+<tr class=""><td>✅ תוקן — #16 אין ניתוב-פוקוס במעבר מסך</td><td><code>script.js</code> (<code>resetScreenState</code>)</td><td>~~אין <code>.focus()</code> במעבר בין מסכים~~ — <strong>תוקן:</strong> כל 28 ה-<code>&lt;section class="screen"&gt;</code> קיבלו <code>tabindex="-1"</code>, ונוספה <code>focusScreen(n)</code> שרצה בסוף <code>resetScreenState</code> (מכוסה גם עבור ניווט חוץ-<code>goTo</code>)</td><td>—</td><td>משתמש-מקלדת/SR מקבל אוריינטציה מיידית במסך החדש (WCAG 2.4.3 A)</td></tr>
+<tr class=""><td>✅ #13 חיווי פוקוס נראה (הערכת-קוד)</td><td>כל <code>styles.css</code></td><td>לא נמצא שום <code>outline:none</code>/<code>outline:0</code> גלובלי או על רכיבים אינטראקטיביים — ה-outline הדפדפני המובנה נשאר פעיל על כפתורים; ל-<code>.rtg-tile-round</code> יש גם עיצוב <code>:focus-visible</code> מפורש (<code>styles.css:530-531</code>)</td><td>—</td><td>לא אומת חזותית בדפדפן חי — ראו אזהרת-הבדיקה</td></tr>
+<tr class=""><td>✅ #15 tabindex חיובי</td><td>כל הקובץ</td><td>לא נמצא שום <code>tabindex</code> בערך גדול מ-0</td><td>—</td><td>—</td></tr>
+<tr class=""><td>❓ #14 סדר-טאב הגיוני</td><td>כל המסכים</td><td>דורש Tab-walk בדפדפן חי; לא בוצע בסביבה זו</td><td>ראו אזהרת-הבדיקה למעלה</td><td>—</td></tr>
+</tbody></table>
+<h3>ד. ARIA ומצבים</h3>
+<table>
+<thead><tr><th>סוג הבעיה</th><th>מיקום (file:line)</th><th>ציטוט / מה נמצא</th><th>המלצת תיקון</th><th>מה הפתרון פותר</th></tr></thead>
+<tbody>
+<tr class=""><td>✅ תוקן — #19 (א) מצב-בחירה/נכון-שגוי לא השתקף ב-ARIA — <code>.q-opt</code></td><td><code>script.js</code> (<code>qSelect</code>, <code>qMarkOptions</code>, <code>qEnter</code>)</td><td>~~רק <code>classList</code> מתעדכן, אין <code>aria-checked</code>~~ — <strong>תוקן:</strong> <code>aria-checked</code> מסונכרן בכל שינוי-class מקביל (בחירה, איפוס-כניסה-למסך, וגילוי-סופי)</td><td>—</td><td>קורא-מסך יודע איזו תשובה נבחרה (WCAG 4.1.2 A)</td></tr>
+<tr class=""><td>✅ תוקן — #19 (ב) מצב-בחירה לא השתקף ב-ARIA — <code>.q1-toggle</code></td><td><code>index.html</code> (14 כפתורים, מסך 6) + <code>script.js</code> (<code>q1Toggle</code>, <code>q1Enter</code>)</td><td>~~מצב <code>selected</code> מסונכרן רק ל-<code>classList</code>, לעולם לא ל-ARIA~~ — <strong>תוקן:</strong> נוסף <code>aria-pressed="false"</code> ראשוני ל-14 הכפתורים ב-HTML, וסונכרן חי ב-<code>q1Toggle</code>/<code>q1Enter</code></td><td>—</td><td>קורא-מסך מכריז אם סומן "מדעי" עבור שורה נתונה (WCAG 4.1.2 A)</td></tr>
+<tr class=""><td>✅ תוקן — #22 הודעות-משוב דינמיות היו בלי live-region</td><td><code>index.html</code> (<code>#feedback-popup</code>) + <code>script.js</code> (<code>showFeedback</code>/<code>hideFeedback</code>)</td><td>~~אין <code>aria-live</code>/<code>role="dialog"</code> על <code>#feedback-popup</code>~~ — <strong>תוקן:</strong> נוסף <code>role="alertdialog" aria-modal="true" aria-labelledby="fb-title" tabindex="-1"</code>, ופוקוס עובר לפופאפ בפתיחה (ראה #12)</td><td>—</td><td>קורא-מסך מכריז "נכון!"/"לא נכון, נסו שוב" בכל אחת מ-11 השאלות (WCAG 4.1.3 AA)</td></tr>
+<tr class=""><td>✅ #17 שם נגיש לרכיבים פעילים אחרים</td><td>כל 28 המסכים</td><td>נבדקו: כפתורי-ניווט (<code>aria-label="חזרה"/"המשך"</code>), כפתורי-וידאו (<code>aria-label="הפעל סרטון"</code>), כפתורי-מיון/בדיקה (טקסט גלוי: "האם צדקתי?", "מדעי", "לא מדעי"), כפתור-הגדלה (<code>aria-label="הגדלת התמונה"</code>), כפתורי-סגירה (<code>aria-label="סגירה"</code>), <code>sim-reopen-btn</code> (שם מ-<code>&lt;span class="sim-reopen-btn-label"&gt;סימולציה&lt;/span&gt;</code> הפנימי) — כולם בעלי שם-נגיש תקין</td><td>—</td><td>—</td></tr>
+<tr class=""><td>✅ #18 role תקין ותואם</td><td><code>index.html:65-92,516,530,544</code></td><td>ערכי ה-<code>role="button"</code> על <code>.rtg-tile-round</code>/<code>.rtg-flipcard</code> תקינים לשונית (אף אם לא-מופעלים במקלדת — ראו #11(ב)); לא נמצא <code>role</code> מיותר על אלמנט native</td><td>—</td><td>—</td></tr>
+<tr class=""><td>✅ #21 aria-hidden לא על רכיב פעיל</td><td><code>index.html:59,116,655,774</code> (<code>.rtg-teacher-char</code>, <code>.q1-picture</code>, <code>.q7-picture</code>, <code>#q-stepper</code>)</td><td>כל שימושי <code>aria-hidden="true"</code> הם על <code>&lt;div&gt;</code>/<code>&lt;img&gt;</code> דקורטיביים או עוטפים לא-אינטראקטיביים — לא על רכיב ניתן-למיקוד</td><td>—</td><td>—</td></tr>
+<tr class=""><td>➖ #20 aria-* מצביע ל-id</td><td>כל הקובץ</td><td>לא נמצא שום שימוש ב-<code>aria-labelledby</code>/<code>aria-describedby</code>/<code>aria-controls</code> בקובץ — לא רלוונטי</td><td>—</td><td>—</td></tr>
+</tbody></table>
+<h3>ה. צבע וניגודיות</h3>
+<table>
+<thead><tr><th>סוג הבעיה</th><th>מיקום (file:line)</th><th>ציטוט / מה נמצא</th><th>המלצת תיקון</th><th>מה הפתרון פותר</th></tr></thead>
+<tbody>
+<tr class="blocker"><td>🔴 #23 ניגודיות טקסט — תג "נצפה" (✓)</td><td><code>styles.css:553-566</code> (<code>.rtg-tile-round .rtg-check</code>)</td><td><code>color:#fff</code> על <code>background:#1FC123</code>, <code>font-size:16px</code> (משקל רגיל) → יחס-ניגודיות <strong>2.41:1</strong> מחושב, נדרש <strong>4.5:1</strong> לטקסט בגודל זה</td><td><strong>הכהו</strong> את הרקע (למשל <code>#1B8A1D</code>, ≈4.6:1 מול לבן) או הגדילו/העיבו את הפונט לחריגה לסף הגדול (3:1)</td><td>סימן ה-✓ המציין "כרטיס נצפה" קריא ללקויי-ראייה (WCAG 1.4.3 AA)</td></tr>
+<tr class="blocker"><td>🔴 #23 ניגודיות טקסט — תיבת-הגדלה ריקה</td><td><code>styles.css:1220</code> (<code>#img-zoom-panel-body</code>, מוזרק ע"י <code>script.js:141</code> כ-fallback כשלתמונה אין <code>data-zoom-src</code>)</td><td><code>color:#888</code> על רקע <code>#fff</code> (<code>.img-zoom-panel</code> — <code>styles.css:1211</code>), <code>font-size:18px</code> רגיל → <strong>3.54:1</strong>, נדרש <strong>4.5:1</strong></td><td><strong>הכהו</strong> ל-<code>#595959</code> (≈7:1) או <code>#767676</code> (≈4.5:1 גבולי)</td><td>טקסט-הגיבוי בחלון ההגדלה קריא (WCAG 1.4.3 AA)</td></tr>
+<tr class="blocker"><td>🔴 #25 (א) צבע כסמן בלעדי — <code>.q1-toggle</code></td><td><code>styles.css:1456-1459</code> (<code>.q1-toggle.correct</code>/<code>.wrong</code>)</td><td>סימון תשובה נכונה/שגויה בטבלת-המיון (מסך 6, 14 כפתורים) הוא <strong>בלעדית</strong> צבע: מסגרת+מילוי ירוק (<code>var(--green-80)</code>) לעומת אדום (<code>var(--red-100)</code>) — <strong>בדיוק זוג-הצבעים הבעייתי ביותר לעיוורי-צבעים אדום-ירוק</strong> (הצורה, גודל וה-<code>aria-label</code> הסטטי זהים בשני המצבים)</td><td><strong>הוסיפו</strong> אייקון (✓/✗) בתוך העיגול בנוסף לצבע, בעזרת <code>content</code> ב-<code>::after</code> או SVG מוזרק</td><td>משתמשים עם עיוורון-צבעים (הנפוץ ביותר) מבחינים בין "נכון" ל"שגוי" (WCAG 1.4.1 A — חובה גם בת"י 5568)</td></tr>
+<tr class="blocker"><td>🔴 #25 (ב) צבע כסמן בלעדי — <code>.q-opt</code></td><td><code>styles.css:891-894</code> (<code>.q-opt.correct</code>/<code>.wrong</code>)</td><td>בכל 11 מסכי-השאלה: תשובה שנבחרה-ונכונה מקבלת רקע/מסגרת ירוקים, שנבחרה-ושגויה — אדומים; אין הבדל טקסטואלי/אייקוני נוסף בין המצבים</td><td><strong>הוסיפו</strong> אייקון ✓/✗ נראה לצד הטקסט בכל אופציה שסומנה, בנוסף לצבע-הרקע</td><td>אותה הנמקה כ-(א) עבור 11 מסכי-השאלה (WCAG 1.4.1 A)</td></tr>
+<tr class="warning"><td>🟠 #26 ארכיטקטורת קנבס קבוע — סיכון-reflow מובנה</td><td><code>styles.css:32-54</code> (<code>html,body{overflow:hidden}</code>, <code>#app{width:1920px;height:1080px}</code>) + <code>script.js:18-27</code> (<code>scaleApp</code>)</td><td>הקנבס שלם מוקבע ל-1920×1080px ומוצג בקנה-מידה יחיד (<code>transform:scale(min(w/1920,h/1080))</code>) ביחס לחלון; <code>overflow:hidden</code> על <code>html,body</code> חוסם כל גלילה. בפועל: <strong>אין reflow אמיתי</strong> — בכל רוחב (כולל 320px) התוכן רק מוקטן פרופורציונלית ("shrink-to-fit"), לרבות הטקסט, שלא ניתן להגדיל עצמאית ללא הגדלת כל הקנבס</td><td><strong>תעדו/בדקו בפועל</strong>: בזום 200% ו-320px, ודאו שהטקסט עדיין קריא בגודל-מסך אמיתי (לא רק "לא נחתך") ושלא נוצרת פסי-ריק (letterboxing) שמסתירים תוכן קריטי; שקלו breakpoint למובייל שמפעיל פריסה זורמת נפרדת</td><td>תוכן קריא ונגיש גם במכשירים צרים/בהגדלה (WCAG 1.4.10 AA — חובה גם בת"י 5568). <strong>לא אומת חזותית בדפדפן חי — ראו אזהרת-הבדיקה</strong></td></tr>
+<tr class=""><td>✅ #27 חסימת-זום ב-viewport</td><td><code>index.html:5</code></td><td><code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code> — אין <code>user-scalable=no</code>/<code>maximum-scale</code></td><td>—</td><td>—</td></tr>
+<tr class="warning"><td>✅ #23 (תיקון-חיוב לדגל שגוי של הסורק) — <code>.q-step</code></td><td><code>styles.css:682-697</code></td><td>הסורק הסטטי דגל <code>#299FD4</code>/<code>#fff</code> (יחס 3.00:1) כ-🟠 לפי סף 4.5:1 של טקסט-רגיל — <strong>אך</strong> הטקסט (מספרי-שלבים 1-9) הוא <code>font-size:34px; font-weight:700</code> (index.html:775-783 + styles.css:690-692), כלומר "טקסט גדול" שסובל בשל <strong>3:1</strong> בלבד. 3.00:1 עומד <strong>בדיוק</strong> בסף (עובר, גבולי)</td><td><strong>מומלץ (לא חוסם)</strong>: הוסיפו שוליים קטנים (למשל <code>#1E8AB8</code>, ≈3.3:1) כרווח-בטיחות מפני שגיאת-עיגול</td><td>—</td></tr>
+<tr class=""><td>❓ #24 ניגודיות רכיבים גרפיים</td><td>גבולות/אייקוני-בחירה בכל המסכים</td><td>דורש בדיקה חזותית/<code>getComputedStyle</code> על DOM חי; לא בוצע</td><td>ראו אזהרת-הבדיקה</td><td>—</td></tr>
+</tbody></table>
+<h3>ו. טפסים ואינטראקציה</h3>
+<table>
+<thead><tr><th>סוג הבעיה</th><th>מיקום (file:line)</th><th>ציטוט / מה נמצא</th><th>המלצת תיקון</th><th>מה הפתרון פותר</th></tr></thead>
+<tbody>
+<tr class=""><td>✅ תוקן — #30 היה אין <code>prefers-reduced-motion</code></td><td><code>styles.css</code> (סוף הקובץ)</td><td>~~אין בלוק <code>@media (prefers-reduced-motion: reduce)</code>~~ — <strong>תוקן:</strong> נוסף בלוק שמכבה את <code>animation</code>/<code>transition</code> של <code>.nav-btn.blink</code>/<code>.rtg-flipcard-face</code> למשתמשים שהפעילו את ההעדפה ברמת מערכת-ההפעלה בלבד — אינו משפיע על אף משתמש אחר</td><td>—</td><td>נוחות למשתמשים רגישי-תנועה (WCAG 2.3.3 AAA)</td></tr>
+<tr class=""><td>✅ #31 היבהוב מהיר</td><td><code>styles.css:212</code></td><td>קצב ה-blink הוא 1.1 שניות למחזור מלא (≈0.9Hz) — הרבה מתחת לסף-הסיכון של 3Hz</td><td>—</td><td>—</td></tr>
+<tr class=""><td>➖ #28 תווית לשדה-קלט</td><td>—</td><td>לא נמצא שום <code>&lt;input&gt;</code>/<code>&lt;textarea&gt;</code>/<code>&lt;select&gt;</code> בכל המודול — לא רלוונטי</td><td>—</td><td>—</td></tr>
+<tr class=""><td>➖ #29 הודעת שגיאה נגישה</td><td>—</td><td>אין טפסים/שדות-קלט הדורשים ולידציה; משוב-תשובה מטופל תחת #22</td><td>—</td><td>—</td></tr>
+</tbody></table>
+<h3>ז. ת"י 5568 — תוספות ישראליות</h3>
+<table>
+<thead><tr><th>סוג הבעיה</th><th>מיקום (file:line)</th><th>ציטוט / מה נמצא</th><th>המלצת תיקון</th><th>מה הפתרון פותר</th></tr></thead>
+<tbody>
+<tr class="warning"><td>🟠 #32 הצהרת נגישות ודרך-פנייה</td><td>כל המודול</td><td>לא נמצא קישור/טקסט להצהרת-נגישות או לפרטי רכז/ת-נגישות בתוך <code>index.html</code></td><td><strong>אמתו מול פלטפורמת-האם</strong> (מוטמע ב-iframe/SCORM) שההצהרה קיימת בשם אתר-האם; אם המודול עומד-בפני-עצמו — הוסיפו קישור</td><td>עמידה בדרישת-הפנייה של תקנות שוויון-זכויות/ת"י 5568</td></tr>
+<tr class="warning"><td>🟠 RTL/עברית — הבחנה כללית</td><td>כל הקובץ</td><td><code>lang="he" dir="rtl"</code> תקין גלובלית (#1); לא בוצעה בדיקה ממוקדת של bidi בתוכן מעורב-כיוון (מספרים בתוך משפטים עבריים, כגון "120 מעלות צלזיוס" ב-alt-טקסטים) מול קורא-מסך בפועל</td><td><strong>מומלץ</strong> בדיקת-NVDA ממוקדת לקטעי alt המכילים מספרים בתוך טקסט עברי</td><td>קריאה תקינה של ערכים מספריים בהקשר עברי</td></tr>
+</tbody></table>
+<p class="">---</p>
+<h2>סיכום מנחה למפתח/ת — 3 התיקונים בעלי ההשפעה הגבוהה ביותר</h2>
+<p class="">1. <strong>#11(א) + #19(א) + #22 (מסכי-שאלה):</strong> הפיכת <code>.q-opt</code> לרכיבים אמיתיים עם role/state/keyboard — זה לבדו פותר כשל שחוסם <strong>11 מתוך 27 מסכי-תוכן</strong> ממשתמשי-מקלדת/קורא-מסך.</p>
+<p class="">2. <strong>#33 (מסך 26):</strong> חלופת-מקלדת לתרגיל-הגרירה — בלעדיה, מסך שלם בלתי-פתיר במקלדת.</p>
+<p class="">3. <strong>#12 + #22 (מודלים/משוב):</strong> ניתוב-פוקוס + <code>aria-live</code>/<code>role="alertdialog"</code> לחלון-המשוב — משפיע על <strong>כל</strong> 11 מסכי-השאלה.</p>
+<h2>טבלת כיסוי — כל 33 הבדיקות</h2>
+<table>
+<thead><tr><th>#</th><th>בדיקה</th><th>קריטריון</th><th>סטטוס</th><th>מיקומים</th></tr></thead>
+<tbody>
+<tr class=""><td>1</td><td>שפת מסמך</td><td>3.1.1</td><td>✅</td><td>index.html:2</td></tr>
+<tr class=""><td>2</td><td>כותרת דף</td><td>2.4.2</td><td>✅</td><td>index.html:6</td></tr>
+<tr class=""><td>3</td><td>סדר כותרות</td><td>1.3.1</td><td>✅ תוקן</td><td>h1×1, h2×13</td></tr>
+<tr class=""><td>4</td><td>landmarks</td><td>1.3.1</td><td>✅ תוקן</td><td>index.html:10 (<code>role="main"</code>)</td></tr>
+<tr class=""><td>5</td><td>מזהים כפולים</td><td>4.1.1/1.3.1</td><td>✅</td><td>—</td></tr>
+<tr class=""><td>6</td><td>טקסט חלופי (alt)</td><td>1.1.1</td><td>✅</td><td>—</td></tr>
+<tr class=""><td>7</td><td>טקסט בתוך תמונה</td><td>1.4.5</td><td>➖ לא-אומת-חזותית</td><td>q3/q4_picture.png</td></tr>
+<tr class="blocker"><td>8</td><td>תוכן נע / GIF</td><td>2.2.2</td><td>🔴 ממצא (וידאו-רקע, לא GIF)</td><td>index.html:169</td></tr>
+<tr class="polish"><td>9</td><td>כתוביות וידאו</td><td>1.2.2</td><td>🔵 ממצא (חלופה קיימת, לא native)</td><td>index.html:33,101,159,223,410,640</td></tr>
+<tr class="warning"><td>10</td><td>autoplay מדיה</td><td>1.4.2</td><td>🟠 ממצא (מושתק)</td><td>index.html:169</td></tr>
+<tr class=""><td>11</td><td>הפעלה במקלדת</td><td>2.1.1</td><td>✅ תוקן — 56/56 מופעים</td><td>ראה טבלה ג'</td></tr>
+<tr class=""><td>12</td><td>מלכודת/ניתוב-מודל</td><td>2.1.2/2.4.3</td><td>✅ תוקן</td><td>index.html (feedback/zoom/sim popups)</td></tr>
+<tr class=""><td>13</td><td>חיווי פוקוס נראה</td><td>2.4.7</td><td>✅ (הערכת-קוד)</td><td>—</td></tr>
+<tr class=""><td>14</td><td>סדר טאב הגיוני</td><td>2.4.3</td><td>❓ לא נבדק דינמית</td><td>—</td></tr>
+<tr class=""><td>15</td><td>tabindex חיובי</td><td>2.4.3</td><td>✅</td><td>—</td></tr>
+<tr class=""><td>16</td><td>פוקוס על תוכן מוזרק</td><td>2.4.3</td><td>✅ תוקן</td><td>script.js (<code>focusScreen</code>)</td></tr>
+<tr class=""><td>17</td><td>שם נגיש</td><td>4.1.2</td><td>✅</td><td>—</td></tr>
+<tr class=""><td>18</td><td>role תקין</td><td>4.1.2</td><td>✅</td><td>—</td></tr>
+<tr class=""><td>19</td><td>מצב משתקף ב-ARIA</td><td>4.1.2</td><td>✅ תוקן</td><td>script.js (<code>qSelect</code>/<code>qMarkOptions</code>/<code>q1Toggle</code>)</td></tr>
+<tr class=""><td>20</td><td>aria-* → id קיים</td><td>1.3.1</td><td>➖ לא-רלוונטי (לא בשימוש)</td><td>—</td></tr>
+<tr class=""><td>21</td><td>aria-hidden לא-על-פעיל</td><td>4.1.2</td><td>✅</td><td>—</td></tr>
+<tr class=""><td>22</td><td>live regions</td><td>4.1.3</td><td>✅ תוקן</td><td>index.html (<code>#feedback-popup</code>)</td></tr>
+<tr class="blocker"><td>23</td><td>ניגודיות טקסט</td><td>1.4.3</td><td>🔴 ממצא (2 ודאיים) + ✅ (2 דגלים כוזבים מתוקנים)</td><td>styles.css:553-566,1220</td></tr>
+<tr class=""><td>24</td><td>ניגודיות רכיבים גרפיים</td><td>1.4.11</td><td>❓ לא נבדק דינמית</td><td>—</td></tr>
+<tr class="blocker"><td>25</td><td>צבע כסמן בלעדי</td><td>1.4.1</td><td>🔴 ממצא</td><td>styles.css:891-894,1456-1459</td></tr>
+<tr class="warning"><td>26</td><td>reflow/zoom</td><td>1.4.4/1.4.10</td><td>🟠 ממצא (סיכון-ארכיטקטורה)</td><td>styles.css:32-54</td></tr>
+<tr class=""><td>27</td><td>חסימת זום viewport</td><td>1.4.4</td><td>✅</td><td>index.html:5</td></tr>
+<tr class=""><td>28</td><td>תווית לשדה קלט</td><td>1.3.1/3.3.2</td><td>➖ לא-רלוונטי (אין טפסים)</td><td>—</td></tr>
+<tr class=""><td>29</td><td>הודעת שגיאה נגישה</td><td>3.3.1</td><td>➖ לא-רלוונטי (אין טפסים)</td><td>—</td></tr>
+<tr class=""><td>30</td><td>reduced-motion</td><td>2.3.3</td><td>✅ תוקן</td><td>styles.css (סוף הקובץ)</td></tr>
+<tr class=""><td>31</td><td>היבהוב</td><td>2.3.1</td><td>✅</td><td>styles.css:212</td></tr>
+<tr class="warning"><td>32</td><td>הצהרת נגישות</td><td>ת"י 5568</td><td>🟠 ממצא</td><td>—</td></tr>
+<tr class=""><td>33</td><td>גרירה ללא חלופת-מקלדת</td><td>2.1.1/4.1.2</td><td>✅ תוקן</td><td>index.html + script.js (<code>ddqKeyPick</code>/<code>ddqKeyDrop</code>)</td></tr>
+</tbody></table>
+</body>
+</html>

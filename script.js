@@ -5,7 +5,7 @@
    RevealTilesGroup, embedded-app gating, drag&drop, scoring.
    =================================================================== */
 
-const TOTAL_SCREENS = 28;
+const TOTAL_SCREENS = 29;
 let currentScreen = 1;
 
 window.lomdaState = {
@@ -42,6 +42,40 @@ function closeAllOverlays() {
   const simPopup = document.getElementById('sim-reopen-popup');
   if (simPopup) simPopup.classList.remove('show');
   document.querySelectorAll('.sim-reopen-btn').forEach(function (b) { b.classList.remove('is-open'); });
+  returnOverlayFocus();
+}
+
+/* ---------------- Overlay focus management (a11y) ----------------
+   feedback-popup / img-zoom-modal / sim-reopen-popup are all role="dialog"/
+   "alertdialog" overlays with no native <dialog> backing them, so focus
+   has to be moved in/out and Tab has to be trapped by hand. */
+let lastFocusedBeforeOverlay = null;
+function openOverlayFocus(el) {
+  if (!el) return;
+  lastFocusedBeforeOverlay = document.activeElement;
+  el.focus({ preventScroll: true });
+}
+function returnOverlayFocus() {
+  const el = lastFocusedBeforeOverlay;
+  lastFocusedBeforeOverlay = null;
+  if (el && typeof el.focus === 'function' && document.contains(el)) el.focus({ preventScroll: true });
+}
+function getOpenDialog() {
+  const ids = ['feedback-popup', 'img-zoom-modal', 'sim-reopen-popup'];
+  for (let i = 0; i < ids.length; i++) {
+    const el = document.getElementById(ids[i]);
+    if (el && el.classList.contains('show')) return el;
+  }
+  return null;
+}
+function getFocusable(container) {
+  return Array.prototype.slice
+    .call(container.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), iframe'))
+    .filter(function (el) { return el.tagName === 'IFRAME' || el.offsetParent !== null; });
+}
+function focusScreen(n) {
+  const section = document.querySelector('.screen[data-screen="' + n + '"]');
+  if (section) section.focus({ preventScroll: true });
 }
 
 function pauseAllVideos() {
@@ -73,9 +107,54 @@ function advanceScreen() {
 function goBack() { goTo(currentScreen - 1); }
 
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'ArrowLeft') advanceScreen();
-  if (e.key === 'ArrowRight') goBack();
+  const openDialog = getOpenDialog();
+
+  // Trap Tab inside whichever overlay is open — otherwise focus can leave
+  // to the screen "behind" it, which a sighted mouse-user would never notice
+  // but strands keyboard/screen-reader users outside a dialog they can't see.
+  if (openDialog && e.key === 'Tab') {
+    const focusables = getFocusable(openDialog);
+    if (!focusables.length) { e.preventDefault(); return; }
+    const first = focusables[0], last = focusables[focusables.length - 1];
+    if (focusables.indexOf(document.activeElement) === -1) {
+      e.preventDefault(); (e.shiftKey ? last : first).focus({ preventScroll: true });
+    } else if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault(); last.focus({ preventScroll: true });
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault(); first.focus({ preventScroll: true });
+    }
+    return;
+  }
+
+  if (!openDialog) {
+    if (e.key === 'ArrowLeft') advanceScreen();
+    if (e.key === 'ArrowRight') goBack();
+  }
   if (e.key === 'Escape') closeAllOverlays();
+
+  if (e.key === 'Enter' || e.key === ' ') {
+    const el = document.activeElement;
+    if (!el) return;
+    // Drag-and-drop keyboard alternative (screen 26) — see ddqKeyPick/ddqKeyDrop.
+    if (el.classList && el.classList.contains('ddq-drag-card')) {
+      e.preventDefault();
+      ddqKeyPick(el.dataset.dragId || el.id);
+      return;
+    }
+    if (el.classList && el.classList.contains('ddq-target')) {
+      e.preventDefault();
+      ddqKeyDrop(el.id);
+      return;
+    }
+    // Generic custom-widget activation: role="button"/"radio"/"checkbox" on a
+    // non-native element (e.g. <div role="button">) gets no automatic
+    // Enter/Space handling from the browser the way a real <button> does.
+    const role = el.getAttribute && el.getAttribute('role');
+    if (role === 'button' || role === 'radio' || role === 'checkbox') {
+      e.preventDefault();
+      el.click();
+    }
+  }
 });
 
 function notifyDev(n) {
@@ -130,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function () { notifyDev(1); });
 function showFeedback(type, cfg, actionsHtml) {
   const popup = document.getElementById('feedback-popup');
   const qcfg = QCONFIG[currentScreen];
-  popup.className = 'show ' + type + (qcfg && qcfg.kind === 'single' ? ' fb-single-q' : '') + (currentScreen === 6 ? ' fb-q1' : '') + (currentScreen === 21 || currentScreen === 22 ? ' fb-s21' : '') + (currentScreen === 25 ? ' fb-s25' : '') + (currentScreen === 26 ? ' fb-s26' : '') + (currentScreen === 27 && type !== 'retry' ? ' fb-s27' : '') + (currentScreen === 18 ? ' fb-s18' : '');
+  popup.className = 'show ' + type + (qcfg && qcfg.kind === 'single' ? ' fb-single-q' : '') + (currentScreen === 6 ? ' fb-q1' : '') + (currentScreen === 22 || currentScreen === 23 ? ' fb-s22' : '') + (currentScreen === 26 ? ' fb-s26' : '') + (currentScreen === 27 ? ' fb-s27' : '') + (currentScreen === 28 && type !== 'retry' ? ' fb-s28' : '') + (currentScreen === 19 ? ' fb-s19' : '');
   document.getElementById('fb-title').textContent = cfg.title || '';
   const bodyEl = document.getElementById('fb-body');
   bodyEl.innerHTML = '';
@@ -141,9 +220,11 @@ function showFeedback(type, cfg, actionsHtml) {
   });
   const actionsEl = document.getElementById('fb-actions');
   actionsEl.innerHTML = actionsHtml || '';
+  openOverlayFocus(popup);
 }
 function hideFeedback() {
   document.getElementById('feedback-popup').classList.remove('show');
+  returnOverlayFocus();
 }
 
 /* ===================================================================
@@ -173,10 +254,12 @@ document.addEventListener('click', function (e) {
       panel.textContent = alt;
     }
     modal.classList.add('show');
+    openOverlayFocus(modal.querySelector('.img-zoom-close'));
     return;
   }
   if (e.target.closest('[data-zoom-close]')) {
     document.getElementById('img-zoom-modal').classList.remove('show');
+    returnOverlayFocus();
   }
 });
 
@@ -203,10 +286,10 @@ const videoEnded = {};
    transcribed from each video's own audio. */
 const VIDEO_CAPTIONS = {
   2: [
-    [4.72, 6.68, 'למה האורות מהבהבים ככה?'],
-    [7.1, 10.08, 'זה נראה כאילו מישהו משחק עם החשמל של כל השכונה.'],
-    [10.24, 12.08, 'לדעתי זה חייזר...'],
-    [12.64, 13.62, 'הוא שולח אותות.']
+    [12.56, 14.34, 'למה האורות מהבהבים ככה?'],
+    [14.76, 17.74, 'זה נראה כאילו מישהו משחק עם החשמל של כל השכונה.'],
+    [18.06, 19.74, 'לדעתי זה חייזר...'],
+    [20.24, 21.22, 'הוא שולח אותות.']
   ],
   5: [
     [0.0, 2.02, 'אילו רעיונות יצירתיים!'],
@@ -221,26 +304,26 @@ const VIDEO_CAPTIONS = {
     [25.24, 26.8, 'שמהן נוכל ללמוד על העולם.'],
     [27.8, 29.44, 'בואו נצא למשימת חקר!']
   ],
-  10: [
+  11: [
     [0.0, 3.58, 'אני משער שברגע שהנורה מתחממת מדי היא נכבית,'],
     [3.58, 6.64, 'וכאשר היא מתקררת היא נדלקת שוב.'],
     [6.64, 8.34, 'זו השערה הגיונית.'],
     [8.78, 10.9, 'אפשר לבדוק את זה באמצעות סימולציה.'],
     [10.9, 12.54, 'יש לי כאן טאבלט.']
   ],
-  16: [
-    [5.9, 8.96, 'אני חושבת שאני יודעת מה גורם להבהובי האור.'],
-    [9.82, 11.76, 'אפשר לראות מה מצאת?'],
-    [13.4, 16.96, 'אסור לכם לגעת בארון חשמל בגלל סכנת התחשמלות,'],
-    [16.96, 18.64, 'בואו נראה את זה בסימולציה.']
+  17: [
+    [5.57, 9.41, 'אני חושבת שאני יודעת מה גורם להבהובי האור.'],
+    [9.41, 11.87, 'אפשר לראות מה מצאת?'],
+    [12.05, 15.61, 'אסור לכם לגעת בארון חשמל בגלל סכנת התחשמלות,'],
+    [15.61, 17.49, 'בואו נראה את זה בסימולציה.']
   ],
-  24: [
-    [0.0, 3.4, 'אתמול פעלנו בדיוק כמו מדענים ומדעניות.'],
-    [4.2, 8.86, 'העלינו רעיונות שונים כדי להסביר את תופעת הבהובי האורות.'],
-    [9.7, 13.32, 'במדע קוראים לרעיונות האלו השערות.'],
-    [14.28, 17.98, 'אחר כך חשבנו איך אפשר לבדוק כל השערה,'],
-    [17.98, 23.36, 'ובחרנו רק את ההשערות שאפשר לבדוק בעזרת כלים מדעיים.'],
-    [24.16, 27.54, 'עכשיו נראה אם אתם זוכרים את הדרך שעברנו.']
+  25: [
+    [0.0, 3.02, 'אתמול פעלנו בדיוק כמו מדענים ומדעניות.'],
+    [3.7, 7.84, 'העלינו רעיונות שונים כדי להסביר את תופעת הבהובי האורות.'],
+    [8.46, 11.64, 'במדע קוראים לרעיונות האלו השערות.'],
+    [12.46, 15.7, 'אחר כך חשבנו איך אפשר לבדוק כל השערה,'],
+    [15.7, 20.4, 'ובחרנו רק את ההשערות שאפשר לבדוק בעזרת כלים מדעיים.'],
+    [21.2, 24.0, 'עכשיו נראה אם אתם זוכרים את הדרך שעברנו.']
   ]
 };
 
@@ -383,7 +466,7 @@ function resetScreen8() {
 }
 
 /* ===================================================================
-   RevealTilesGroup — shared local variant (screens 4 & 20)
+   RevealTilesGroup — shared local variant (screens 4 & 21)
    =================================================================== */
 const RevealTilesGroup = {
   state: {}, // screenNum -> Set of viewed tile ids
@@ -482,6 +565,7 @@ function qEnter(n) {
   }
   document.querySelectorAll('.screen[data-screen="' + n + '"] .q-opt').forEach(function (o) {
     o.classList.remove('selected', 'correct', 'wrong');
+    o.setAttribute('aria-checked', 'false');
   });
   if (checkBtn) { checkBtn.disabled = true; checkBtn.style.display = 'none'; }
   hideFeedback();
@@ -498,12 +582,18 @@ function qSelect(n, id) {
   if (cfg.kind === 'single') {
     st.selected = id;
     document.querySelectorAll('.screen[data-screen="' + n + '"] .q-opt').forEach(function (o) {
-      o.classList.toggle('selected', o.getAttribute('data-id') === id);
+      const isSel = o.getAttribute('data-id') === id;
+      o.classList.toggle('selected', isSel);
+      o.setAttribute('aria-checked', String(isSel));
     });
   } else {
     if (st.selected.has(id)) st.selected.delete(id); else st.selected.add(id);
     const optEl = document.querySelector('.screen[data-screen="' + n + '"] .q-opt[data-id="' + id + '"]');
-    if (optEl) optEl.classList.toggle('selected', st.selected.has(id));
+    if (optEl) {
+      const isSel = st.selected.has(id);
+      optEl.classList.toggle('selected', isSel);
+      optEl.setAttribute('aria-checked', String(isSel));
+    }
   }
   const checkBtn = document.getElementById('q-check-' + n);
   const hasSelection = cfg.kind === 'single' ? !!st.selected : st.selected.size >= 1;
@@ -528,6 +618,19 @@ function qIsCorrect(n) {
   return true;
 }
 
+// Multi-choice partial credit check: did the learner pick at least one of
+// the correct answers (even though not all of them)? Used to distinguish
+// "זו תשובה חלקית" from a fully-wrong final attempt (no correct answers
+// picked at all) — only meaningful where the config defines a `partial`
+// feedback entry (see qCheck).
+function qHasAnyCorrectSelected(n) {
+  const cfg = QCONFIG[n];
+  const st = qState[n];
+  if (cfg.kind !== 'multi') return false;
+  for (const v of st.selected) if (cfg.correctSet.indexOf(v) !== -1) return true;
+  return false;
+}
+
 function qMarkOptions(n, finalReveal) {
   const cfg = QCONFIG[n];
   const st = qState[n];
@@ -535,6 +638,7 @@ function qMarkOptions(n, finalReveal) {
     const id = o.getAttribute('data-id');
     const isSelected = cfg.kind === 'single' ? st.selected === id : st.selected.has(id);
     const isCorrectOpt = cfg.kind === 'single' ? id === cfg.correct : cfg.correctSet.indexOf(id) !== -1;
+    o.setAttribute('aria-checked', String(isSelected));
     o.classList.remove('correct', 'wrong');
     if (finalReveal) {
       if (isCorrectOpt) o.classList.add('correct');
@@ -549,7 +653,7 @@ function qRenderLocked(n) {
   qMarkOptions(n, true);
   const cfg = QCONFIG[n];
   const st = qState[n];
-  const outcome = st.scoredCorrect ? 'correct' : 'wrong2';
+  const outcome = st.scoredCorrect ? 'correct' : (st.scoredPartial ? 'partial' : 'wrong2');
   showFeedback(outcome, cfg.feedback[outcome]);
 }
 
@@ -568,7 +672,7 @@ function qCheck(n) {
     recordScore(cfg.key, cfg.weight);
     showFeedback('correct', cfg.feedback.correct);
     if (checkBtn) { checkBtn.disabled = true; checkBtn.style.display = 'none'; }
-    if (n !== 25) revealForwardNav(n); // screen 25: arrow waits for teacher reveal (see override below)
+    if (n !== 26) revealForwardNav(n); // screen 26: arrow waits for teacher reveal (see override below)
     return;
   }
 
@@ -578,9 +682,14 @@ function qCheck(n) {
     st.scoredCorrect = false;
     window.lomdaState.DONE[n] = true;
     recordScore(cfg.key, 0);
-    showFeedback('wrong2', cfg.feedback.wrong2);
+    // Partial credit wording: only kicks in where the config actually
+    // defines a `partial` feedback entry, and only when the learner's final
+    // pick included at least one correct answer (not zero).
+    st.scoredPartial = !!cfg.feedback.partial && qHasAnyCorrectSelected(n);
+    const outcome = st.scoredPartial ? 'partial' : 'wrong2';
+    showFeedback(outcome, cfg.feedback[outcome]);
     if (checkBtn) { checkBtn.disabled = true; checkBtn.style.display = 'none'; }
-    if (n !== 25) revealForwardNav(n); // screen 25: arrow waits for teacher reveal (see override below)
+    if (n !== 26) revealForwardNav(n); // screen 26: arrow waits for teacher reveal (see override below)
     return;
   }
 
@@ -646,7 +755,10 @@ function q1Enter() {
     return;
   }
   q1State = { answers: {}, attempts: q1State.attempts, done: false, lastWrong: q1State.lastWrong };
-  document.querySelectorAll('.q1-toggle').forEach(function (b) { b.classList.remove('selected', 'correct', 'wrong'); });
+  document.querySelectorAll('.q1-toggle').forEach(function (b) {
+    b.classList.remove('selected', 'correct', 'wrong');
+    b.setAttribute('aria-pressed', 'false');
+  });
   if (checkBtn) checkBtn.disabled = true;
   hideFeedback();
 }
@@ -655,7 +767,9 @@ function q1Toggle(rowId, val) {
   if (q1State.done) return;
   q1State.answers[rowId] = val;
   document.querySelectorAll('.q1-toggle[data-row="' + rowId + '"]').forEach(function (b) {
-    b.classList.toggle('selected', b.getAttribute('data-val') === val);
+    const isSel = b.getAttribute('data-val') === val;
+    b.classList.toggle('selected', isSel);
+    b.setAttribute('aria-pressed', String(isSel));
   });
   const allAnswered = Q1_ROWS.every(function (r) { return q1State.answers[r.id]; });
   document.getElementById('q1-check').disabled = !allAnswered;
@@ -717,7 +831,7 @@ function recordScore(key, points) {
 }
 
 /* ===================================================================
-   Embedded simulation apps (screens 11 & 17) + reopen modal
+   Embedded simulation apps (screens 12 & 18) + reopen modal
    Arrow reveals 15s after the learner launches the simulation (per
    production script: "החץ יופיע 15 שנ' לאחר הפעלת הישומון").
    =================================================================== */
@@ -730,44 +844,88 @@ function simLaunch(n) {
   setTimeout(function () { revealForwardNav(n); }, 15000);
 }
 function resetSimScreen(n) {
-  if (n !== 17) syncTextbox1(n); // no-op for screen 11; screen 17 uses fixed CSS positioning instead of the auto-height calc
+  if (n !== 18) syncTextbox1(n); // no-op for screen 12; screen 18 uses fixed CSS positioning instead of the auto-height calc
   if (window.lomdaState.DONE[n]) return;
   const arrow = document.querySelector('.screen[data-screen="' + n + '"] .nav-next');
   if (arrow) arrow.classList.add('hidden');
-  // Screens 11 & 17: the real app is embedded inline on the tablet (no
+  // Screens 12 & 18: the real app is embedded inline on the tablet (no
   // click-to-launch placeholder), so start the same 15s reveal timer on
   // entry instead of waiting for a simLaunch() click.
-  if ((n === 11 || n === 17) && !simLaunched[n]) {
+  if ((n === 12 || n === 18) && !simLaunched[n]) {
     simLaunched[n] = true;
     setTimeout(function () { revealForwardNav(n); }, 15000);
   }
 }
 
-/* Reopen popup used from screens 12-15 (sim screen 11) and 18-19 (sim screen
-   17) — anchored near its own .sim-reopen-btn (Psifas's .reminder-btn/
+/* Reopen popup used from screens 13-16 (sim screen 12) and 19-20 (sim screen
+   18) — anchored near its own .sim-reopen-btn (Psifas's .reminder-btn/
    .reminder-help-popup pattern) instead of a full-screen centered modal.
    Toggling: click again (or any other screen's reopen button) to close. */
+// While the sim reopen-popup is open, any already-showing feedback popup
+// (a question answered before opening the simulation) is hidden so the two
+// don't overlap, then brought back automatically when the sim popup closes.
+let simPopupHiddenFeedback = false;
+
 function toggleSimPopup(btn, srcScreen) {
   const popup = document.getElementById('sim-reopen-popup');
   const body = document.getElementById('sim-reopen-popup-body');
+  const feedbackPopup = document.getElementById('feedback-popup');
   const isOpen = popup.classList.contains('show') && btn.classList.contains('is-open');
   document.querySelectorAll('.sim-reopen-btn').forEach(function (b) { b.classList.remove('is-open'); });
   popup.classList.remove('show');
+  popup.classList.remove('is-reminder');
   if (isOpen) {
     body.innerHTML = '';
+    returnOverlayFocus();
+    if (simPopupHiddenFeedback) {
+      feedbackPopup.classList.add('show');
+      simPopupHiddenFeedback = false;
+    }
     return;
   }
-  if (srcScreen === 11) {
+  simPopupHiddenFeedback = feedbackPopup.classList.contains('show');
+  if (simPopupHiddenFeedback) feedbackPopup.classList.remove('show');
+  if (srcScreen === 12) {
     body.innerHTML = '<iframe src="assets/app/LIGHT_BOLB.html" title="סימולציית נורה מתחממת"></iframe>';
   } else {
     body.innerHTML = '<iframe src="assets/app/LOOSE_CONNECTION.html" title="סימולציית חיבור רופף בלוח החשמל"></iframe>';
   }
   popup.classList.add('show');
   btn.classList.add('is-open');
+  openOverlayFocus(popup);
+}
+
+/* Screen 10's "תזכורת" button — same reopen-popup mechanism as the
+   simulation screens (toggleSimPopup), but shows the group A data text +
+   weather forecast image (screen 9's content) instead of an embedded app. */
+function toggleReminderPopup(btn) {
+  const popup = document.getElementById('sim-reopen-popup');
+  const body = document.getElementById('sim-reopen-popup-body');
+  const feedbackPopup = document.getElementById('feedback-popup');
+  const isOpen = popup.classList.contains('show') && btn.classList.contains('is-open');
+  document.querySelectorAll('.sim-reopen-btn').forEach(function (b) { b.classList.remove('is-open'); });
+  popup.classList.remove('show');
+  popup.classList.remove('is-reminder');
+  if (isOpen) {
+    body.innerHTML = '';
+    returnOverlayFocus();
+    if (simPopupHiddenFeedback) {
+      feedbackPopup.classList.add('show');
+      simPopupHiddenFeedback = false;
+    }
+    return;
+  }
+  simPopupHiddenFeedback = feedbackPopup.classList.contains('show');
+  if (simPopupHiddenFeedback) feedbackPopup.classList.remove('show');
+  popup.classList.add('is-reminder');
+  body.innerHTML = '<div class="reminder-content"><div class="reminder-text"><strong>קבוצה א\' חקרה את ההשערה שברקים גורמים לאורות להבהב. אלה הנתונים שאספה:</strong><br>השמיים היו בהירים לחלוטין, לא נשמע רעם, ואפליקציית מזג האוויר הראתה שאין סיכוי לגשם באזור:</div><img class="reminder-weather-img" src="assets/images/q2_picture.png" alt=""></div>';
+  popup.classList.add('show');
+  btn.classList.add('is-open');
+  openOverlayFocus(popup);
 }
 
 /* ===================================================================
-   Drag & Drop — Screen 26 (Q8), 6-step process ordering, maxAttempts:2
+   Drag & Drop — Screen 27 (Q8), 6-step process ordering, maxAttempts:2
    with View My Answer Toggle on the final wrong attempt.
    =================================================================== */
 const DDQ = {
@@ -794,6 +952,14 @@ let ddqLastWrong = null;
 let ddqScoredCorrect = null;
 let ddqDragActive = null;
 let ddqDropHandled = false;
+// ddqPicked: dragId currently "picked up" via the keyboard alternative to
+// native HTML5 drag (which is mouse/touch-only — see ddqKeyPick/ddqKeyDrop).
+let ddqPicked = null;
+
+function ddqAnnounce(msg) {
+  const el = document.getElementById('a11y-status');
+  if (el) el.textContent = msg;
+}
 
 function ddqRender() {
   // source tray
@@ -801,9 +967,14 @@ function ddqRender() {
     const card = document.getElementById(id);
     if (!card) return;
     const slot = card.closest('.ddq-source-slot');
+    const num = id.replace('drag-', '');
     if (ddqPlacement[id] === 'source') {
       if (slot) slot.appendChild(card);
       card.classList.remove('ghost');
+      card.classList.toggle('selected', ddqPicked === id);
+      card.setAttribute('aria-label', ddqPicked === id
+        ? 'שלב ' + num + ', נבחר. הקישו Enter לביטול הבחירה, או נווטו לתא ריק והקישו Enter להצבה'
+        : 'שלב ' + num + ', הקישו Enter לבחירה ולאחר מכן על התא הריק המתאים');
     } else if (slot) {
       card.classList.add('ghost');
     }
@@ -818,20 +989,71 @@ function ddqRender() {
     if (placedId) {
       const num = placedId.replace('drag-', '');
       const chip = document.createElement('div');
-      chip.className = 'ddq-drag-card' + (ddqChecked ? ' locked' : '');
+      chip.className = 'ddq-drag-card' + (ddqChecked ? ' locked' : '') + (ddqPicked === placedId ? ' selected' : '');
       chip.textContent = num;
       chip.id = 'placed-' + targetId;
+      chip.dataset.dragId = placedId;
       chip.draggable = !ddqChecked;
+      if (!ddqChecked) {
+        chip.setAttribute('role', 'button');
+        chip.setAttribute('tabindex', '0');
+        chip.setAttribute('aria-label', 'שלב ' + num + ' מוצב בתא זה, הקישו Enter להרים ולהעביר');
+      }
       chip.addEventListener('dragstart', function (e) { ddqPlacedDragStart(e, placedId); });
       chip.addEventListener('dragend', ddqDragEnd);
       target.appendChild(chip);
       target.classList.add('occupied');
+      target.setAttribute('tabindex', '-1');
+      target.setAttribute('aria-label', 'תא תפוס בשלב ' + num);
+    } else {
+      target.setAttribute('tabindex', ddqChecked ? '-1' : '0');
+      target.setAttribute('aria-label', ddqPicked ? 'תא ריק, הקישו Enter להצבת השלב שנבחר' : 'תא ריק');
     }
+  });
+}
+
+function ddqKeyPick(dragId) {
+  if (ddqChecked || !dragId) return;
+  const num = dragId.replace('drag-', '');
+  if (ddqPicked === dragId) {
+    ddqPicked = null;
+    ddqRender();
+    ddqAnnounce('בוטלה הבחירה של שלב ' + num + '.');
+    return;
+  }
+  if (ddqPlacement[dragId] !== 'source') ddqPlacement[dragId] = 'source';
+  ddqPicked = dragId;
+  ddqRender();
+  ddqAnnounce('שלב ' + num + ' נבחר. נווטו בעזרת Tab לתא הריק הרצוי והקישו Enter להצבה.');
+  const card = document.getElementById(dragId);
+  if (card) card.focus({ preventScroll: true });
+}
+
+function ddqKeyDrop(targetId) {
+  if (ddqChecked) return;
+  if (!ddqPicked) {
+    ddqAnnounce('בחרו קודם שלב מרשימת הכרטיסים בעזרת Enter.');
+    return;
+  }
+  const dragId = ddqPicked;
+  const num = dragId.replace('drag-', '');
+  Object.keys(ddqPlacement).forEach(function (k) {
+    if (ddqPlacement[k] === targetId && k !== dragId) ddqPlacement[k] = 'source';
+  });
+  ddqPlacement[dragId] = targetId;
+  ddqPicked = null;
+  ddqRender();
+  ddqUpdateCheckGate();
+  ddqAnnounce('שלב ' + num + ' הוצב בתא.');
+  requestAnimationFrame(function () {
+    const placedChip = document.getElementById('placed-' + targetId);
+    if (placedChip) placedChip.focus({ preventScroll: true });
   });
 }
 
 function ddqDragStart(e, dragId) {
   if (ddqChecked) { e.preventDefault(); return; }
+  ddqPicked = null;
   ddqDragActive = dragId;
   ddqDropHandled = false;
   e.dataTransfer.setData('text/plain', dragId);
@@ -909,7 +1131,13 @@ function ddqRevealCorrect() {
 }
 function ddqLock() {
   ddqChecked = true;
-  document.querySelectorAll('.ddq-drag-card').forEach(function (c) { c.classList.add('locked'); c.draggable = false; });
+  ddqPicked = null;
+  document.querySelectorAll('.ddq-drag-card').forEach(function (c) {
+    c.classList.add('locked');
+    c.draggable = false;
+    c.setAttribute('tabindex', '-1');
+  });
+  document.querySelectorAll('.ddq-target').forEach(function (t) { t.setAttribute('tabindex', '-1'); });
   const btn = document.getElementById('ddq-check');
   if (btn) btn.disabled = true;
 }
@@ -926,12 +1154,12 @@ function ddqCheck() {
     ddqMarkTargetsCorrect();
     ddqLock();
     ddqDone = true;
-    window.lomdaState.DONE[26] = true;
+    window.lomdaState.DONE[27] = true;
     recordScore('q8', 10);
     showFeedback('correct', DDQ.feedbackText.correct);
     const btn = document.getElementById('ddq-check');
     if (btn) btn.style.display = 'none';
-    revealForwardNav(26);
+    revealForwardNav(27);
     return;
   }
 
@@ -941,7 +1169,7 @@ function ddqCheck() {
     // fill in on their own (no "view my answer"/"view solution" toggle).
     ddqScoredCorrect = false;
     ddqDone = true;
-    window.lomdaState.DONE[26] = true;
+    window.lomdaState.DONE[27] = true;
     recordScore('q8', 0);
     ddqMarkTargetsByCorrectness();
     ddqLock();
@@ -951,7 +1179,7 @@ function ddqCheck() {
     setTimeout(function () {
       ddqRevealCorrect();
       ddqMarkTargetsCorrect();
-      revealForwardNav(26);
+      revealForwardNav(27);
     }, 2000);
     return;
   }
@@ -985,6 +1213,7 @@ function ddqEnter() {
   }
   ddqPlacement = { 'drag-1': 'source', 'drag-2': 'source', 'drag-3': 'source', 'drag-4': 'source', 'drag-5': 'source', 'drag-6': 'source' };
   ddqChecked = false;
+  ddqPicked = null;
   ddqAttempts = 0;
   ddqLastWrong = null;
   ddqRender();
@@ -993,7 +1222,7 @@ function ddqEnter() {
 }
 
 /* ===================================================================
-   Completion screen (28)
+   Completion screen (29)
    =================================================================== */
 function computeFinalGrade() { return Math.round(window.lomdaState.score); }
 function finishLomda() {
@@ -1013,8 +1242,8 @@ function enterCompletion() {
    shown/moved to the active step whenever a question screen is entered.
    =================================================================== */
 const SCREEN_TO_QSTEP = {
-  6: 1, 9: 2, 12: 3, 13: 3, 14: 3, 15: 3, 18: 4, 19: 4,
-  21: 5, 22: 6, 25: 7, 26: 8, 27: 9
+  6: 1, 10: 2, 13: 3, 14: 3, 15: 3, 16: 3, 19: 4, 20: 4,
+  22: 5, 23: 6, 26: 7, 27: 8, 28: 9
 };
 function updateQStepper(n) {
   const stepper = document.getElementById('q-stepper');
@@ -1040,33 +1269,35 @@ function resetScreenState(n) {
     case 6: q1Enter(); break;
     case 7: resetVideoScreen(7); break;
     case 8: resetScreen8(); break;
-    case 9: qEnter(9); break;
-    case 10: resetVideoScreen(10); break;
-    case 11: resetSimScreen(11); break;
-    case 12: qEnter(12); break;
+    case 9: resetExplainScreen(9); break;
+    case 10: qEnter(10); break;
+    case 11: resetVideoScreen(11); break;
+    case 12: resetSimScreen(12); break;
     case 13: qEnter(13); break;
     case 14: qEnter(14); break;
     case 15: qEnter(15); break;
-    case 16: resetVideoScreen(16); break;
-    case 17: resetSimScreen(17); break;
-    case 18: qEnter(18); break;
+    case 16: qEnter(16); break;
+    case 17: resetVideoScreen(17); break;
+    case 18: resetSimScreen(18); break;
     case 19: qEnter(19); break;
-    case 20: RevealTilesGroup.init(20); RevealTilesGroup.reset(20); break;
-    case 21: qEnter(21); break;
+    case 20: qEnter(20); break;
+    case 21: syncTextbox1(21); RevealTilesGroup.init(21); RevealTilesGroup.reset(21); break;
     case 22: qEnter(22); break;
-    case 23: resetExplainScreen(23); break;
-    case 24: resetVideoScreen(24); break;
-    case 25: qEnter(25); break;
-    case 26: ddqEnter(); break;
-    case 27: qEnter(27); break;
-    case 28: enterCompletion(); break;
+    case 23: qEnter(23); break;
+    case 24: resetExplainScreen(24); break;
+    case 25: resetVideoScreen(25); break;
+    case 26: qEnter(26); break;
+    case 27: ddqEnter(); break;
+    case 28: qEnter(28); break;
+    case 29: enterCompletion(); break;
   }
+  focusScreen(n);
 }
 
 /* ===================================================================
    Question config registration
    =================================================================== */
-qInitConfig(9, {
+qInitConfig(10, {
   kind: 'single', key: 'q2', weight: 10, correct: '2',
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
@@ -1074,7 +1305,7 @@ qInitConfig(9, {
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['ברקים מתרחשים בזמן סערה. מכיוון שהשמיים היו בהירים ולא היה סיכוי לגשם, אפשר לשלול את ההשערה שברקים גרמו להבהוב האורות.'] }
   }
 });
-qInitConfig(12, {
+qInitConfig(13, {
   kind: 'single', key: 'q3a', weight: 5, correct: '1',
   feedback: {
     retry: { title: 'זו אינה התשובה,', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
@@ -1082,7 +1313,7 @@ qInitConfig(12, {
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['הגרף מראה שטמפרטורת הנורה עולה בהדרגה לאורך הזמן. הממצא הזה יעזור לנו להבין בהמשך מדוע הנורה נכבית.'] }
   }
 });
-qInitConfig(13, {
+qInitConfig(14, {
   kind: 'single', key: 'q3b', weight: 5, correct: '3',
   feedback: {
     retry: { title: 'זו אינה התשובה,', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
@@ -1090,7 +1321,7 @@ qInitConfig(13, {
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['הנורה נכבית כאשר טמפרטורת הנורה מגיעה לטמפרטורת הסף (120°C).'] }
   }
 });
-qInitConfig(14, {
+qInitConfig(15, {
   kind: 'single', key: 'q3c', weight: 5, correct: '1',
   feedback: {
     retry: { title: 'זו אינה התשובה,', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
@@ -1098,7 +1329,7 @@ qInitConfig(14, {
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['לאחר שהנורה התקררה לטמפרטורת החדר (25°C), היא נדלקה שוב.'] }
   }
 });
-qInitConfig(15, {
+qInitConfig(16, {
   kind: 'single', key: 'q3d', weight: 5, correct: '2',
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
@@ -1106,15 +1337,16 @@ qInitConfig(15, {
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['הסימולציה מראה שהנורה נכבית כאשר היא מתחממת מדי, ונדלקת מחדש לאחר שהתקררה. מכאן אפשר להסיק שהבהוב האורות נגרם ממנגנון הגנה מפני התחממות יתר.'] }
   }
 });
-qInitConfig(18, {
+qInitConfig(19, {
   kind: 'multi', key: 'q4a', weight: 5, correctSet: ['2', '4'],
   feedback: {
     retry: { title: 'זו אינה התשובה,', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
     correct: { title: 'צדקת!', body: ['בסימולציה אפשר לזהות חיבור רופף לפי שני סימנים: הזרם החשמלי אינו רציף, והנורה מהבהבת או נחלשת לסירוגין.'] },
+    partial: { title: 'זו תשובה חלקית', body: ['בסימולציה אפשר לזהות חיבור רופף לפי שני סימנים: הזרם החשמלי אינו רציף, והנורה מהבהבת או נחלשת לסירוגין.'] },
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['בסימולציה אפשר לזהות חיבור רופף לפי שני סימנים: הזרם החשמלי אינו רציף, והנורה מהבהבת או נחלשת לסירוגין.'] }
   }
 });
-qInitConfig(19, {
+qInitConfig(20, {
   kind: 'single', key: 'q4b', weight: 5, correct: '1',
   feedback: {
     retry: { title: 'זו אינה התשובה,', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
@@ -1122,15 +1354,16 @@ qInitConfig(19, {
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['חיבור רופף גורם לזרם החשמלי להיעצר ולהתחדש במהירות. כתוצאה מכך הנורה אינה מקבלת זרם באופן רציף ולכן היא מהבהבת.'] }
   }
 });
-qInitConfig(21, {
+qInitConfig(22, {
   kind: 'multi', key: 'q5', weight: 10, correctSet: ['1', '3', '5'],
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
     correct: { title: 'צדקת!', body: ['חיבור חשמלי רופף הוא לא רק תקלה טכנית. הוא עלול להשפיע על בטיחות התושבים, על אספקת החשמל ועל איכות החיים בשכונה.'] },
+    partial: { title: 'זו תשובה חלקית', body: ['חיבור חשמלי רופף הוא לא רק תקלה טכנית. הוא עלול להשפיע על בטיחות התושבים, על אספקת החשמל ועל איכות החיים בשכונה.'] },
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['חיבור חשמלי רופף הוא לא רק תקלה טכנית. הוא עלול להשפיע על בטיחות התושבים, על אספקת החשמל ועל איכות החיים בשכונה.'] }
   }
 });
-qInitConfig(22, {
+qInitConfig(23, {
   kind: 'single', key: 'q6', weight: 10, correct: '2',
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
@@ -1138,15 +1371,16 @@ qInitConfig(22, {
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['כאשר מזהים תקלה שעלולה לסכן את הציבור, האחריות שלנו היא לדווח לגורמים המוסמכים כדי שיוכלו לטפל בה בצורה בטוחה.'] }
   }
 });
-qInitConfig(25, {
+qInitConfig(26, {
   kind: 'multi', key: 'q7', weight: 10, correctSet: ['1', '3'],
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
     correct: { title: 'צדקת!', body: ['חקר מדעי מתבסס על רעיונות שאפשר לבדוק באופן ממשי באמצעות תצפיות, ניסויים וכלים מדעיים.'] },
+    partial: { title: 'זו תשובה חלקית', body: ['חקר מדעי מתבסס על רעיונות שאפשר לבדוק באופן ממשי באמצעות תצפיות, ניסויים וכלים מדעיים.'] },
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['חקר מדעי מתבסס על רעיונות שאפשר לבדוק באופן ממשי באמצעות תצפיות, ניסויים וכלים מדעיים.'] }
   }
 });
-qInitConfig(27, {
+qInitConfig(28, {
   kind: 'single', key: 'q9', weight: 10, correct: '3',
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
@@ -1155,17 +1389,17 @@ qInitConfig(27, {
   }
 });
 
-/* Screen 25 extra: teacher character appears AFTER feedback is shown */
+/* Screen 26 extra: teacher character appears AFTER feedback is shown */
 (function () {
   const originalQCheck = qCheck;
   window.qCheck = function (n) {
     originalQCheck(n);
-    if (n === 25 && qState[25] && qState[25].done) {
-      const teacher = document.getElementById('s25-teacher');
+    if (n === 26 && qState[26] && qState[26].done) {
+      const teacher = document.getElementById('s26-teacher');
       if (teacher) teacher.style.display = 'block';
-      const pic = document.querySelector('[data-screen="25"] .q7-picture');
+      const pic = document.querySelector('[data-screen="26"] .q7-picture');
       if (pic) pic.style.display = 'none';
-      setTimeout(function () { revealForwardNav(25); }, 400);
+      setTimeout(function () { revealForwardNav(26); }, 400);
     }
   };
 })();
@@ -1183,6 +1417,6 @@ document.addEventListener('DOMContentLoaded', function () {
    — resync every textbox1 bubble once fonts settle so none end up clipped. */
 if (document.fonts && document.fonts.ready) {
   document.fonts.ready.then(function () {
-    [2, 5, 7, 10, 16, 24].forEach(syncTextbox1);
+    [2, 5, 7, 9, 11, 17, 21, 25].forEach(syncTextbox1);
   });
 }

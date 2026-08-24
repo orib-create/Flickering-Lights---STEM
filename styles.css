@@ -73,7 +73,11 @@ html, body {
   height: 1080px;
   overflow: hidden;
 }
-.screen.active { display: block; }
+.screen.active { display: block; animation: screenFadeIn 0.35s ease; }
+@keyframes screenFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
 /* real background image (once an asset is supplied for a screen) */
 .screen-bg {
@@ -161,7 +165,7 @@ html, body {
   color: #fff;
   font-family: 'Assistant', sans-serif;
   font-weight: 700;
-  font-size: 34px;
+  font-size: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -255,18 +259,22 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 0;
   text-align: center;
 }
 .intro-title-line1 {
   color: #17171f;
   font-size: 93px;
   font-weight: 500;
+  line-height: 1;
 }
 .intro-title-line2 {
   color: #17171f;
   font-size: 93px;
   font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  margin-top: 10px;
 }
 .intro-start-btn {
   position: absolute;
@@ -370,12 +378,24 @@ html, body {
 }
 [data-screen="2"] .textbox1-bg,
 [data-screen="3"] .textbox1-bg,
-[data-screen="10"] .textbox1-bg,
-[data-screen="16"] .textbox1-bg {
+[data-screen="11"] .textbox1-bg,
+[data-screen="17"] .textbox1-bg {
   width: 1635px;
   height: 1080px;
   left: auto;
   top: 4px;
+}
+[data-screen="9"] .textbox1-bg {
+  width: 2110px;
+  height: 1195px;
+  left: auto;
+  top: 4px;
+}
+[data-screen="9"] .textbox1-bg-crop {
+  right: -112px;
+  top: -43px;
+  width: 2089px;
+  height: 242px;
 }
 
 /* Extended version (screens 5, 7, 10, 16, 24 — longer narration than the
@@ -452,20 +472,25 @@ html, body {
 
 [data-screen="8"] .textbox1-content { width: 1160px; }
 
-[data-screen="10"] .textbox1-content { top: 30px; width: 1350px; height: 115px; }
+[data-screen="9"] .textbox1-content { top: 30px; width: 1350px; height: 115px; }
+[data-screen="9"] .textbox1-wrap { width: 1350px; height: 280px; }
 
-#textbox-content-s16 { height: 94px; width: 1060px; margin-top: 0px; }
+[data-screen="11"] .textbox1-content { top: 30px; width: 1350px; height: 115px; }
+
+#textbox-content-s17 { height: 94px; width: 1060px; margin-top: 0px; }
 
 
-[data-screen="17"] .textbox1-content { top: 30px; right: -43px; width: 960px; }
+[data-screen="18"] .textbox1-content { top: 30px; right: -43px; width: 960px; }
 /* Screen 17 no longer uses textbox1-right-bg (the baked-in tablet card
    graphic) or the JS auto-height calc — strip/corner are fixed by hand. */
-#textbox-strip-s17 { top: -43px; height: 171px; right: -250px; }
-#textbox-corner-s17 { top: 124px; right: -249px; height: 133px; }
+#textbox-strip-s18 { top: -43px; height: 171px; right: -250px; }
+#textbox-corner-s18 { top: 124px; right: -249px; height: 133px; }
 
-[data-screen="23"] .textbox1-content { top: 0; right: 0; width: 1050px; }
+[data-screen="24"] .textbox1-content { top: 0; right: 0; width: 1050px; }
 
-/* ---------- RevealTilesGroup (screens 4 & 20) ---------- */
+[data-screen="21"] .textbox1-bg-crop { right: -400px; top: -66px; }
+
+/* ---------- RevealTilesGroup (screens 4 & 21) ---------- */
 /* Screen 4's intro line lives in a bubble-talk_2.png callout, with the
    teacher (teacher.png) live below-right of it — both source PNGs are full
    1920x1080 canvases with the real artwork only in one corner, so each is
@@ -474,7 +499,7 @@ html, body {
    axes) to enlarge without distorting the line art. */
 .rtg-teacher-char {
   position: absolute;
-  top: 30px;
+  top: 56px;
   right: 60px;
   width: 218px;
   height: 210px;
@@ -489,13 +514,13 @@ html, body {
 .rtg-bubble2 {
   position: absolute;
   top: -10px;
-  right: 202px;
+  right: 244px;
   width: 800px;
-  height: 245px;
+  height: 262px;
   background-image: url('assets/images/bubble-talk_2.png');
   background-repeat: no-repeat;
-  background-size: 100% 100%;
-  padding: 22px 50px 28px 36px;
+  background-size: 104% 104%;
+  padding: 31px 39px 38px 31px;
   box-sizing: border-box;
   z-index: 7;
 }
@@ -665,6 +690,8 @@ html, body {
 .card-c-crop { background-size: 1613.4px 907.6px; background-position: -1009.4px -207.6px; }
 .rtg-flipcard-title { font-size: 34px; font-weight: 800; color: #000; margin-top: -185px; }
 .rtg-flipcard-label { font-size: 34px; font-weight: 600; margin-top: 215px; }
+.rtg-flipcard-back .rtg-flipcard-label { font-weight: 800; color: #0B0D5E; }
+.q-highlight { color: #0B0D5E; }
 .rtg-flipcard-text { font-size: 34px; font-weight: 600; color: #222; line-height: 1.4; width: 250px; }
 .rtg-flipcard-back .rtg-flipcard-label:nth-child(1) { margin-top: -100px; }
 .rtg-flipcard-back .rtg-flipcard-label:nth-child(3) { margin-top: 25px; }
@@ -763,39 +790,22 @@ html, body {
 [data-screen="6"] .q-title { color: #000; font-size: 34px; }
 [data-screen="6"] .q-body { font-size: 34px; }
 
-/* Screen 9 — two-column layout (right: group findings + weather app photo,
-   left: question title/body/options), matching the Psifas reference
-   project's left-panel/right-panel question-1 split. */
-[data-screen="9"] .s9-row { display: flex; gap: 50px; align-items: flex-start; }
-[data-screen="9"] .s9-left {
+/* Screen 10 — question layout (title/body/options in .s9-left). Screen 9
+   used to share this two-column layout before it was redesigned around the
+   Background13 photo + textbox1 narration bubble (see below); .s9-row/
+   .s9-left/.s9-children-img now only apply to screen 10. */
+[data-screen="10"] .s9-row { display: flex; gap: 50px; align-items: flex-start; }
+[data-screen="10"] .s9-left {
   flex: 1 1 auto;
   min-width: 0;
   margin-bottom: 18px;
   margin-right: 30px;
   margin-top: 15px;
 }
-[data-screen="9"] .s9-right {
-  flex: 0 0 auto;
-  width: 420px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: 18px;
-  margin-right: 30px;
-  margin-top: 15px;
-}
-[data-screen="9"] .q-title { color: #000; font-size: 34px; }
-[data-screen="9"] .q-body { font-size: 34px; }
+[data-screen="10"] .q-title { color: #000; font-size: 34px; }
+[data-screen="10"] .q-body { font-size: 34px; }
 .q-body strong { font-weight: 800; }
-[data-screen="9"] .q-context {
-  font-size: 34px;
-  margin: 0;
-  text-align: right;
-}
-[data-screen="9"] .q-context strong { font-weight: 800; }
-[data-screen="9"] .s9-weather-img { width: 280px; height: auto; margin-right: 175px; }
-[data-screen="9"] .s9-children-img {
+[data-screen="10"] .s9-children-img {
   position: absolute;
   bottom: -103px;
   right: 30px;
@@ -803,7 +813,19 @@ html, body {
   height: auto;
   z-index: 2;
 }
-[data-screen="9"] #q-check-9 { position: absolute; bottom: 185px; left: 110px; right: auto; }
+[data-screen="10"] #q-check-10 { position: absolute; bottom: 185px; left: 110px; right: auto; }
+/* Screen 9 — full-scene photo background (kids in the park), mirrored so
+   they read on the left; the group's data text sits in the standard
+   textbox1 narration bubble at the top, weather-forecast image on the right. */
+[data-screen="9"] .s9-bg-flip { transform: scaleX(-1); }
+.s9-weather-img-standalone {
+  position: absolute;
+  top: 300px;
+  right: 200px;
+  width: 520px;
+  height: auto;
+  z-index: 2;
+}
 /* Single-choice ("American-style") question rows, everywhere in the lomda:
    plain flat rows (no card/border/background) with the Psifas reference
    project's own radio SVG states (normal/selected/correct/incorrect) swapped
@@ -879,6 +901,7 @@ html, body {
   gap: 14px;
   max-width: 1100px;
 }
+[data-screen="10"] .q-answers { max-width: 1200px; }
 .q-opt {
   display: flex;
   align-items: center;
@@ -891,6 +914,15 @@ html, body {
   cursor: pointer;
   color: var(--text);
 }
+/* Questions 5, 6, 9 (screens 22, 23, 28): the longer option text wraps to
+   two lines here, so the bullet is pinned to the top line instead of
+   centered against the whole (2-line) block. */
+[data-screen="22"] .q-opt, [data-screen="23"] .q-opt, [data-screen="28"] .q-opt {
+  align-items: flex-start;
+}
+[data-screen="22"] .q-opt .q-radio, [data-screen="23"] .q-opt .q-radio, [data-screen="28"] .q-opt .q-radio {
+  margin-top: 15px;
+}
 .q-opt .q-radio {
   order: -1;
   width: 26px;
@@ -900,7 +932,7 @@ html, body {
   flex: 0 0 auto;
   position: relative;
 }
-.q-opt[data-multi] .q-radio { border-radius: 6px; }
+.q-opt[data-multi] .q-radio { border-radius: 50%; }
 .q-opt.selected .q-radio { border-color: var(--subject-500); background: var(--subject-500); }
 .q-opt.selected .q-radio::after {
   content: "";
@@ -936,31 +968,34 @@ html, body {
   border: none;
 }
 .q-opt[data-multi] .q-radio {
-  width: 34px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border: none;
   border-radius: 0;
   background-color: transparent;
-  background-image: url('assets/images/mc-normal.svg');
+  background-image: url('assets/images/radio-normal.svg');
   background-size: contain;
   background-repeat: no-repeat;
 }
 .q-opt[data-multi] .q-radio::after,
 .q-opt[data-multi].selected .q-radio::after { content: none; }
 .q-opt[data-multi].selected .q-radio {
-  background-image: url('assets/images/mc-selected.svg');
+  background-image: url('assets/images/radio-selected.svg');
   background-color: transparent;
   background-size: contain;
   background-repeat: no-repeat;
 }
 .q-opt[data-multi].correct .q-radio {
-  background-image: url('assets/images/mc-correct.svg');
+  background-image: url('assets/images/radio-correct.svg');
   background-color: transparent;
   background-size: contain;
   background-repeat: no-repeat;
+  width: 26.16px;
+  height: 24.83px;
+  left: 6px;
 }
 .q-opt[data-multi].wrong .q-radio {
-  background-image: url('assets/images/mc-incorrect.svg');
+  background-image: url('assets/images/radio-incorrect.svg');
   background-color: transparent;
   background-size: contain;
   background-repeat: no-repeat;
@@ -1004,49 +1039,49 @@ html, body {
 .s12-graph-title { font-size: 34px; font-weight: 800; color: #000; margin-bottom: 14px; text-align: center; }
 /* Same two-column ("American question" right / graph-or-diagram left) look
    reused across every split-question screen: 3.א-ד (12-15) and 4.א-ב (18-19). */
-[data-screen="12"] .q-imgframe,
 [data-screen="13"] .q-imgframe,
 [data-screen="14"] .q-imgframe,
 [data-screen="15"] .q-imgframe,
-[data-screen="18"] .q-imgframe,
-[data-screen="19"] .q-imgframe { width: 100%; height: 100%; padding: 0; }
+[data-screen="16"] .q-imgframe,
+[data-screen="19"] .q-imgframe,
+[data-screen="20"] .q-imgframe { width: 100%; height: 100%; padding: 0; }
 .s12-graph-img { width: 90%; height: 100%; object-fit: contain; border-radius: 14px; }
-[data-screen="12"] .q-title,
 [data-screen="13"] .q-title,
 [data-screen="14"] .q-title,
 [data-screen="15"] .q-title,
-[data-screen="18"] .q-title,
+[data-screen="16"] .q-title,
 [data-screen="19"] .q-title,
-[data-screen="21"] .q-title,
+[data-screen="20"] .q-title,
 [data-screen="22"] .q-title,
-[data-screen="26"] .q-title,
-[data-screen="27"] .q-title { color: #000; font-size: 34px; }
-[data-screen="12"] .q-body,
+[data-screen="23"] .q-title,
+[data-screen="27"] .q-title,
+[data-screen="28"] .q-title { color: #000; font-size: 34px; }
 [data-screen="13"] .q-body,
 [data-screen="14"] .q-body,
 [data-screen="15"] .q-body,
-[data-screen="18"] .q-body,
+[data-screen="16"] .q-body,
 [data-screen="19"] .q-body,
-[data-screen="21"] .q-body,
+[data-screen="20"] .q-body,
 [data-screen="22"] .q-body,
-[data-screen="26"] .q-body,
-[data-screen="27"] .q-body { font-size: 34px; }
-[data-screen="26"] .q-title,
-[data-screen="26"] .q-body,
-[data-screen="26"] .ddq-wrap { margin-top: 15px; margin-right: 30px; }
-[data-screen="12"] #q-check-12,
+[data-screen="23"] .q-body,
+[data-screen="27"] .q-body,
+[data-screen="28"] .q-body { font-size: 34px; }
+[data-screen="27"] .q-title,
+[data-screen="27"] .q-body,
+[data-screen="27"] .ddq-wrap { margin-top: 15px; margin-right: 30px; }
 [data-screen="13"] #q-check-13,
 [data-screen="14"] #q-check-14,
 [data-screen="15"] #q-check-15,
-[data-screen="18"] #q-check-18,
+[data-screen="16"] #q-check-16,
 [data-screen="19"] #q-check-19,
-[data-screen="21"] #q-check-21,
+[data-screen="20"] #q-check-20,
 [data-screen="22"] #q-check-22,
-[data-screen="27"] #q-check-27 { position: absolute; bottom: 185px; left: 110px; right: auto; }
-[data-screen="21"] #q-check-21 { bottom: 137px; }
-[data-screen="22"] #q-check-22 { bottom: 140px; }
-[data-screen="25"] #q-check-25 { bottom: 150px; right: 1100px; left: auto; }
-[data-screen="26"] #ddq-check { bottom: 150px; right: 1620px; left: auto; }
+[data-screen="23"] #q-check-23,
+[data-screen="28"] #q-check-28 { position: absolute; bottom: 185px; left: 110px; right: auto; }
+[data-screen="22"] #q-check-22 { bottom: 137px; }
+[data-screen="23"] #q-check-23 { bottom: 140px; }
+[data-screen="26"] #q-check-26 { bottom: 150px; right: 1100px; left: auto; }
+[data-screen="27"] #ddq-check { bottom: 150px; right: 1620px; left: auto; }
 
 /* Teacher + speech-bubble column (teacher_small.png + bubble-talk.png).
    Screens 21/22: always visible, teacher on the right / question on the
@@ -1056,10 +1091,11 @@ html, body {
    RTL flex row) and the teacher column is added second (renders on the
    left), the exact mirror of screens 21/22's DOM order. */
 .qt-row { display: flex; gap: 40px; align-items: flex-start; }
+[data-screen="26"] .qt-row { width: 1100px; }
 .qt-question-col { flex: 1 1 auto; min-width: 0; margin-bottom: 18px; margin-right: 30px; margin-top: 15px; }
-[data-screen="21"] .qt-question-col,
 [data-screen="22"] .qt-question-col,
-[data-screen="27"] .qt-question-col { margin-right: 525px; }
+[data-screen="23"] .qt-question-col,
+[data-screen="28"] .qt-question-col { margin-right: 525px; }
 .qt-teacher-col {
   flex: 0 0 auto;
   width: 300px;
@@ -1096,18 +1132,18 @@ html, body {
   text-align: right;
 }
 .qt-teacher-img { display: block; width: 190px; height: auto; margin: -16px auto 0; }
-[data-screen="21"] .qt-teacher-img,
 [data-screen="22"] .qt-teacher-img,
-[data-screen="27"] .qt-teacher-img {
+[data-screen="23"] .qt-teacher-img,
+[data-screen="28"] .qt-teacher-img {
   width: 139%;
   /* margin-bottom: 39px; */
 }
-[data-screen="25"] .qt-teacher-img {
+[data-screen="26"] .qt-teacher-img {
   width: 313px;
   height: auto;
   margin: 152px -250px 0px;
 }
-[data-screen="25"] .qt-bubble {
+[data-screen="26"] .qt-bubble {
   width: 402px;
   margin: 0 auto;
   margin-right: -70px;
@@ -1151,19 +1187,19 @@ html, body {
 }
 #feedback-popup.show { display: block; }
 #feedback-popup.fb-q1 { width: 565px; height: 835px; bottom: 145px; }
-#feedback-popup.fb-s21 { bottom: 150px; right: 500px; width: 400px; }
-#feedback-popup.fb-s25 { right: 100px; }
-#feedback-popup.fb-s26 { width: 450px; }
-#feedback-popup.fb-s26.retry { bottom: 400px; }
-#feedback-popup.fb-s27 { width: 500px; right: 450px; }
-/* Screen 18 (Q4.א retry): moved to sit right beside #q-check-18 (left:110px,
+#feedback-popup.fb-s22 { bottom: 150px; right: 500px; width: 400px; }
+#feedback-popup.fb-s26 { right: 100px; }
+#feedback-popup.fb-s27 { width: 450px; }
+#feedback-popup.fb-s27.retry { bottom: 400px; }
+#feedback-popup.fb-s28 { width: 500px; right: 450px; }
+/* Screen 19 (Q4.א retry): moved to sit right beside #q-check-19 (left:110px,
    width:206px) instead of the default bottom-left placement, so the retry
    message reads next to the button that triggered it. */
-#feedback-popup.fb-s18 { left: 340px; right: auto; bottom: 185px; }
+#feedback-popup.fb-s19 { left: 340px; right: auto; bottom: 185px; }
 .fb-title-row { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin: 0 0 10px; }
 .fb-title { font-size: 34px; font-weight: 700; margin: 0; color: #fcfafa; text-align: right; line-height: 1.5; }
 #feedback-popup.correct .fb-title { color: #44A84B; }
-#feedback-popup.retry .fb-title, #feedback-popup.wrong2 .fb-title { color: #B67BE0; }
+#feedback-popup.retry .fb-title, #feedback-popup.wrong2 .fb-title, #feedback-popup.partial .fb-title { color: #B67BE0; }
 /* correct.png is already a tight icon; mistake.png is a full 1920x1080
    canvas with the icon art in one corner, cropped via background-position
    rather than stretched. */
@@ -1173,7 +1209,7 @@ html, body {
   background-image: url('assets/images/correct.png');
   background-size: contain;
 }
-#feedback-popup.wrong2 .fb-icon {
+#feedback-popup.wrong2 .fb-icon, #feedback-popup.partial .fb-icon {
   display: inline-block;
   background-image: url('assets/images/mistake.png');
   background-size: 640px 360px;
@@ -1245,12 +1281,17 @@ html, body {
 .img-zoom-close {
   position: absolute;
   top: 16px; left: 16px;
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  background: #fff;
-  border: 2px solid var(--subject-500);
+  width: 60px; height: 60px;
+  padding: 0;
+  border: none;
+  background: none;
   cursor: pointer;
 }
+.img-zoom-close-icon { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.img-zoom-close-icon-normal { display: block; }
+.img-zoom-close-icon-hover { display: none; }
+.img-zoom-close:hover .img-zoom-close-icon-normal { display: none; }
+.img-zoom-close:hover .img-zoom-close-icon-hover { display: block; }
 
 /* ---------- Embedded app / simulation screens (11, 17) ---------- */
 .sim-wrap {
@@ -1299,7 +1340,7 @@ html, body {
   pointer-events: none;
   user-select: none;
 }
-[data-screen="11"] .sim-instructions {
+[data-screen="12"] .sim-instructions {
   position: absolute;
   top: 0px;
   right: 30px;
@@ -1313,7 +1354,7 @@ html, body {
   line-height: 1.5;
   color: #111;
 }
-[data-screen="11"] .sim-instructions ol { font-size: 34px; }
+[data-screen="12"] .sim-instructions ol { font-size: 34px; }
 .sim-tablet-app {
   position: absolute;
   left: 170px;
@@ -1388,9 +1429,27 @@ html, body {
   z-index: 20;
   display: none;
 }
+/* Screen 10's "תזכורת" popup uses a narrower panel (text+image, not a
+   simulation iframe) — toggled via .is-reminder, set by toggleReminderPopup. */
+.sim-reopen-popup.is-reminder { width: 600px; height: 733px; }
 .sim-reopen-popup.show { display: block; }
-#sim-reopen-popup-body { width: 100%; height: 100%; }
+#sim-reopen-popup-body { width: 100%; height: 100%; background: #fef3bf; }
 .sim-reopen-popup iframe { width: 100%; height: 100%; border: none; }
+/* Screen 10's "תזכורת" popup — plain text + image instead of an embedded app. */
+.reminder-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 40px;
+  box-sizing: border-box;
+}
+.reminder-text { font-size: 30px; text-align: right; line-height: 1.5; color: #111; }
+.reminder-text strong { font-weight: 800; }
+.reminder-weather-img { display: block; margin: 0 auto; max-width: 60%; height: auto; }
 .sim-reopen-popup .sim-placeholder-label { display: flex; align-items: center; justify-content: center; height: 100%; }
 
 /* Simulation reopen modal */
@@ -1504,8 +1563,8 @@ html, body {
    .q1-picture (a decorative photo sitting behind the question text), but
    q7_picture.png is already a tightly-cropped stack of three polaroids
    (539x760, portrait) so it's used as a plain <img>, no crop math needed. */
-[data-screen="25"] .q-title { color: #000; font-size: 34px; }
-[data-screen="25"] .q-body { font-size: 34px; }
+[data-screen="26"] .q-title { color: #000; font-size: 34px; }
+[data-screen="26"] .q-body { font-size: 34px; }
 .q7-picture {
   position: absolute;
   top: 30px;
@@ -1606,7 +1665,7 @@ html, body {
   width: 950px;
   height: 10%;
 }
-.completion-bubble-img { display: block; width: 100%; height: auto; pointer-events: none; user-select: none; }
+.completion-bubble-img { display: block; width: 103%; height: 156%; pointer-events: none; user-select: none; }
 .completion-bubble p {
   position: absolute;
   inset: 0;
@@ -1622,6 +1681,7 @@ html, body {
   color: #111;
   text-align: right;
   margin: 0;
+  margin-top: 20px;
 }
 #completion-grade-display { display: none; }
 /* Reuses .btn-continue's own sprite (btn-submit-sprite-normal/hover.png) —
@@ -1659,3 +1719,28 @@ html, body {
   cursor: pointer;
 }
 #dev-bar select { background:#333; color:#fff; border:1px solid #666; border-radius:4px; }
+
+/* ---------- Accessibility utilities (a11y) ---------- */
+/* Visually-hidden but still present for assistive tech / keyboard focus.
+   Standard sr-only technique — never becomes visible, so it can't affect
+   the module's look; used only for the aria-live status region. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Respect the OS-level "reduce motion" preference — only changes anything
+   for users who have that setting on; everyone else's experience (and every
+   screenshot/QA capture) is unaffected. */
+@media (prefers-reduced-motion: reduce) {
+  .nav-btn.blink { animation: none; }
+  .rtg-flipcard-face { transition: none; }
+  * { scroll-behavior: auto !important; }
+}
