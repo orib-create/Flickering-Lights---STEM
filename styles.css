@@ -73,11 +73,7 @@ html, body {
   height: 1080px;
   overflow: hidden;
 }
-.screen.active { display: block; animation: screenFadeIn 0.35s ease; }
-@keyframes screenFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+.screen.active { display: block; }
 
 /* real background image (once an asset is supplied for a screen) */
 .screen-bg {
