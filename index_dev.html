@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>DEV — תעלומה בשכונה</title>
+<style>
+  html,body{margin:0;padding:0;height:100%;background:#111;overflow:hidden;font-family:'Assistant',sans-serif;}
+  #dev-bar{
+    position:fixed; top:0; right:0; left:0; height:40px; background:#222; color:#fff;
+    display:flex; align-items:center; gap:10px; padding:0 14px; z-index:99999; font-size:14px; direction:rtl;
+  }
+  #dev-bar button{ background:#444; color:#fff; border:1px solid #666; border-radius:4px; padding:4px 10px; cursor:pointer; }
+  #dev-bar button:hover{ background:#555; }
+  #dev-bar select{ background:#333; color:#fff; border:1px solid #666; border-radius:4px; padding:3px 6px; }
+  #dev-bar .spacer{ flex:1; }
+  #dev-bar .label{ opacity:.7; }
+  #frame-wrap{ position:absolute; top:40px; right:0; left:0; bottom:0; }
+  #lomda-frame{ width:100%; height:100%; border:0; background:#000; }
+</style>
+</head>
+<body>
+  <div id="dev-bar">
+    <span class="label">DEV מצב פיתוח — ניווט חופשי</span>
+    <button id="dev-prev" title="Ctrl+←">◀ הקודם</button>
+    <select id="dev-select"></select>
+    <button id="dev-next" title="Ctrl+→">הבא ▶</button>
+    <span class="spacer"></span>
+    <span class="label" id="dev-current">מסך 1 / 28</span>
+  </div>
+  <div id="frame-wrap">
+    <iframe id="lomda-frame" src="index.html"></iframe>
+  </div>
+
+<script>
+  'use strict';
+  const TOTAL_SCREENS = 28;
+  const SCREEN_LABELS = {
+    1:'1 — פתיחה', 2:'2 — וידאו: לילה שקט', 3:'3 — הסבר: המורה מציעה לחקור',
+    4:'4 — לוח רעיונות (7 דמויות)', 5:'5 — וידאו: המורה מסכמת רעיונות',
+    6:'6 — שאלה 1 (טבלת מיון)', 7:'7 — וידאו: מעבר למשימת חקר',
+    8:'8 — הסבר: חלוקה ל-3 קבוצות', 9:'9 — שאלה 2 (קבוצה א׳)',
+    10:'10 — וידאו: קבוצה ב׳ השערת חימום', 11:'11 — ישומון: נורה מתחממת',
+    12:'12 — שאלה 3.א', 13:'13 — שאלה 3.ב', 14:'14 — שאלה 3.ג', 15:'15 — שאלה 3.ד',
+    16:'16 — וידאו: חשמלאית', 17:'17 — ישומון: חיבור רופף',
+    18:'18 — שאלה 4.א (רב-בחירה)', 19:'19 — שאלה 4.ב',
+    20:'20 — כרטיסיות ממצאים (3 קבוצות)', 21:'21 — שאלה 5 (רב-בחירה)',
+    22:'22 — שאלה 6', 23:'23 — הסבר: שכנים מדווחים', 24:'24 — וידאו: המורה מסכמת',
+    25:'25 — שאלה 7 (רב-בחירה + מורה)', 26:'26 — שאלה 8 (גרירה)',
+    27:'27 — שאלה 9', 28:'28 — סיום'
+  };
+
+  const iframe = document.getElementById('lomda-frame');
+  const select = document.getElementById('dev-select');
+  const currentLabel = document.getElementById('dev-current');
+  let current = 1;
+
+  for (let i = 1; i <= TOTAL_SCREENS; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = SCREEN_LABELS[i] || ('מסך ' + i);
+    select.appendChild(opt);
+  }
+
+  function sendGoTo(n) {
+    n = Math.max(1, Math.min(TOTAL_SCREENS, n));
+    iframe.contentWindow.postMessage({ type: 'DEV_GOTO', screen: n }, '*');
+  }
+
+  select.addEventListener('change', () => sendGoTo(parseInt(select.value, 10)));
+  document.getElementById('dev-prev').addEventListener('click', () => sendGoTo(current - 1));
+  document.getElementById('dev-next').addEventListener('click', () => sendGoTo(current + 1));
+
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'LOMDA_SCREEN_CHANGED') {
+      current = e.data.screen;
+      select.value = current;
+      currentLabel.textContent = 'מסך ' + current + ' / ' + TOTAL_SCREENS;
+    }
+    if (e.data && e.data.type === 'LOMDA_COMPLETE') {
+      currentLabel.textContent = 'הושלם — ציון: ' + e.data.score;
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'ArrowLeft') sendGoTo(current + 1);
+    if (e.ctrlKey && e.key === 'ArrowRight') sendGoTo(current - 1);
+  });
+</script>
+</body>
+</html>
