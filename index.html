@@ -24,6 +24,20 @@
      visible, so each screen's own image only starts fetching when goTo()
      actually reveals it. -->
 
+<!-- Screen 1's own background and screen 4's teacher-character/speech-bubble
+     backgrounds are ALSO plain CSS background-image (never an <img>), and
+     unlike the button sprites above, a display:none .screen simply never
+     fetches its background-image at all until goTo() sets it to
+     display:block — so on first arrival at that screen, its own text (real
+     DOM text, no network dependency) paints instantly while the
+     CSS-background art is only just starting to fetch, visibly popping in
+     a moment later. Preloading these specific ones (screen 1 is visible
+     from the very first paint; screen 4 is reached within a couple of
+     clicks) gets them into cache well before the browser actually asks for
+     them via CSS. -->
+<link rel="preload" as="image" href="assets/images/Background1.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="assets/images/teacher.png">
+<link rel="preload" as="image" href="assets/images/bubble-talk_2.png">
 <link rel="preload" as="image" href="assets/images/btn-submit-sprite-normal.png">
 <link rel="preload" as="image" href="assets/images/btn-submit-sprite-hover.png">
 <link rel="preload" as="image" href="assets/images/Next_Btn.png">
