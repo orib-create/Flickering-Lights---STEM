@@ -38,6 +38,23 @@
 <link rel="preload" as="image" href="assets/images/Background1.jpg" fetchpriority="high">
 <link rel="preload" as="image" href="assets/images/teacher.png">
 <link rel="preload" as="image" href="assets/images/bubble-talk_2.png">
+<!-- Background_Q.jpeg + textbox2.png are the shared question-panel art
+     reused across ~11 question screens (6, 10, 13-16, 19-20, 22-23, 26-28)
+     — screen 6 is the first one reached, so without preloading, that first
+     question screen pays the full fetch cost before its panel/background
+     appear. q1_picture.png is the same CSS-background pop-in issue as
+     teacher.png/bubble-talk_2.png above, just on screen 6's own table. -->
+<link rel="preload" as="image" href="assets/images/Background_Q.jpeg">
+<link rel="preload" as="image" href="assets/images/textbox2.png">
+<link rel="preload" as="image" href="assets/images/q1_picture.png">
+<!-- Screen 10's children.png is a real <img loading="lazy">, not a CSS
+     background — its native lazy-load already defers the fetch until the
+     screen becomes visible (avoiding the eager thundering-herd problem),
+     but that still means it only starts fetching right as the screen is
+     revealed, popping in a moment after the question text. Preloading it
+     removes that last bit of visible lag too. -->
+<link rel="preload" as="image" href="assets/images/children.png">
+<link rel="preload" as="image" href="assets/images/Background12.jpeg">
 <link rel="preload" as="image" href="assets/images/btn-submit-sprite-normal.png">
 <link rel="preload" as="image" href="assets/images/btn-submit-sprite-hover.png">
 <link rel="preload" as="image" href="assets/images/Next_Btn.png">

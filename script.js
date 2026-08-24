@@ -96,6 +96,35 @@ function pauseAllVideos() {
   document.querySelectorAll('video').forEach(function (v) { try { v.pause(); } catch (e) {} });
 }
 
+/* A display:none .screen's own <img loading="lazy"> elements only start
+   fetching the instant that screen becomes active — correct for avoiding
+   the "every screen at once" contention problem (see the note at the top
+   of index.html), but it also means EVERY screen's background/support
+   images visibly pop in a moment after that screen's own (network-free)
+   text has already painted, on first arrival. Rather than hand-adding a
+   <link rel="preload"> per screen every time this gets noticed, warm the
+   NEXT screen's images into cache while the learner is still reading the
+   CURRENT one — by the time they actually advance, the images are already
+   there. Plain `new Image()` fetches happen regardless of the real <img>'s
+   own loading="lazy"/display:none state, and requestIdleCallback keeps
+   this from competing with the current screen's own just-triggered loads. */
+const preloadedScreens = {};
+function preloadScreenImages(n) {
+  if (preloadedScreens[n]) return;
+  preloadedScreens[n] = true;
+  const screen = document.querySelector('.screen[data-screen="' + n + '"]');
+  if (!screen) return;
+  screen.querySelectorAll('img[src]').forEach(function (img) {
+    const warm = new Image();
+    warm.src = img.getAttribute('src');
+  });
+}
+function schedulePreload(n) {
+  const run = function () { preloadScreenImages(n); };
+  if (window.requestIdleCallback) requestIdleCallback(run, { timeout: 2000 });
+  else setTimeout(run, 500);
+}
+
 function goTo(n) {
   if (n < 1 || n > TOTAL_SCREENS) return;
   pauseAllVideos();
@@ -106,6 +135,8 @@ function goTo(n) {
   currentScreen = n;
   resetScreenState(n);
   notifyDev(n);
+  schedulePreload(n + 1);
+  schedulePreload(n - 1); // goBack() is just as common as advancing
 }
 
 function advanceScreen() {
@@ -1555,6 +1586,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const first = document.querySelector('.screen[data-screen="1"]');
   if (first) first.classList.add('active');
   resetScreenState(1);
+  schedulePreload(2);
   Object.keys(VIDEO_CAPTIONS).forEach(function (n) { setupVideoCaptions(Number(n)); });
   // Bind the .vctrls bar up front for every video screen (not on first play) —
   // the bar itself is always visible in the markup (no .hidden gate), so its
