@@ -994,10 +994,10 @@ html, body {
 /* Questions 5, 6, 9 (screens 22, 23, 28): the longer option text wraps to
    two lines here, so the bullet is pinned to the top line instead of
    centered against the whole (2-line) block. */
-[data-screen="22"] .q-opt, [data-screen="23"] .q-opt, [data-screen="28"] .q-opt {
+[data-screen="22"] .q-opt, [data-screen="23"] .q-opt, [data-screen="26"] .q-opt, [data-screen="28"] .q-opt {
   align-items: flex-start;
 }
-[data-screen="22"] .q-opt .q-radio, [data-screen="23"] .q-opt .q-radio, [data-screen="28"] .q-opt .q-radio {
+[data-screen="22"] .q-opt .q-radio, [data-screen="23"] .q-opt .q-radio, [data-screen="26"] .q-opt .q-radio, [data-screen="28"] .q-opt .q-radio {
   margin-top: 15px;
 }
 .q-opt .q-radio {
@@ -1157,22 +1157,25 @@ html, body {
 [data-screen="28"] #q-check-28 { position: absolute; bottom: 185px; left: 110px; right: auto; }
 [data-screen="22"] #q-check-22 { bottom: 137px; }
 [data-screen="23"] #q-check-23 { bottom: 140px; }
-[data-screen="26"] #q-check-26 { bottom: 150px; right: 1100px; left: auto; }
+[data-screen="26"] #q-check-26 { position: absolute; bottom: 185px; left: 700px; right: auto; }
 [data-screen="27"] #ddq-check { bottom: 150px; right: 1620px; left: auto; }
 
-/* Teacher + speech-bubble column (teacher_small.png + bubble-talk.png).
-   Screens 21/22: always visible, teacher on the right / question on the
-   left. Screen 25: hidden until a final correct/incorrect answer (see
-   qCheck's screen-25 override in script.js), then revealed on the LEFT —
-   the question column stays first in markup (renders on the right in this
-   RTL flex row) and the teacher column is added second (renders on the
-   left), the exact mirror of screens 21/22's DOM order. */
+/* Teacher + speech-bubble column (teacher_small.png + bubble-talk.png),
+   used by screens 22/23/28 (always visible, teacher on the right / question
+   on the left, both inside .qt-row). Screen 26 uses the plain .s12-row/
+   .s12-right/.s12-left split instead (same text position as every other
+   split-question screen) with the teacher column living inside .s12-left,
+   swapped in for .q7-picture after the answer is checked — see
+   qCheck's screen-26 override in script.js. */
 .qt-row { display: flex; gap: 40px; align-items: flex-start; }
-[data-screen="26"] .qt-row { width: 1100px; }
 .qt-question-col { flex: 1 1 auto; min-width: 0; margin-bottom: 18px; margin-right: 30px; margin-top: 15px; }
 [data-screen="22"] .qt-question-col,
 [data-screen="23"] .qt-question-col,
 [data-screen="28"] .qt-question-col { margin-right: 525px; }
+/* Screen 26 keeps the base 30px margin (not the 525px above) — its .qt-row
+   is capped at 1100px (see below) to leave room for .q7-picture sitting at
+   the row's physical left, so the same wide margin used by 22/23/28's
+   (unconstrained-width) row would squeeze the question text far too narrow. */
 .qt-teacher-col {
   flex: 0 0 auto;
   width: 300px;
@@ -1211,20 +1214,10 @@ html, body {
 .qt-teacher-img { display: block; width: 190px; height: auto; margin: -16px auto 0; }
 [data-screen="22"] .qt-teacher-img,
 [data-screen="23"] .qt-teacher-img,
+[data-screen="26"] .qt-teacher-img,
 [data-screen="28"] .qt-teacher-img {
   width: 139%;
   /* margin-bottom: 39px; */
-}
-[data-screen="26"] .qt-teacher-img {
-  width: 313px;
-  height: auto;
-  margin: 152px -250px 0px;
-}
-[data-screen="26"] .qt-bubble {
-  width: 402px;
-  margin: 0 auto;
-  margin-right: -70px;
-  margin-top: 23px;
 }
 
 .img-zoom-btn {
@@ -1265,7 +1258,7 @@ html, body {
 #feedback-popup.show { display: block; }
 #feedback-popup.fb-q1 { width: 565px; height: 835px; bottom: 145px; }
 #feedback-popup.fb-s22 { bottom: 150px; right: 500px; width: 400px; }
-#feedback-popup.fb-s26 { right: 100px; }
+#feedback-popup.fb-s26 { right: 100px; bottom: 150px; }
 #feedback-popup.fb-s27 { width: 450px; }
 #feedback-popup.fb-s27.retry { bottom: 400px; }
 #feedback-popup.fb-s28 { width: 500px; right: 450px; }
@@ -1642,6 +1635,11 @@ html, body {
    (539x760, portrait) so it's used as a plain <img>, no crop math needed. */
 [data-screen="26"] .q-title { color: #000; font-size: 34px; }
 [data-screen="26"] .q-body { font-size: 34px; }
+/* .s26-left holds either .q7-picture (before answering) or the teacher+
+   bubble column .qt-teacher-col (swapped in after, see script.js) — same
+   fixed-width .s12-left slot every other split-question screen uses, so
+   swapping its contents never resizes/reflows .s12-right's question text. */
+.s26-left { text-align: center; }
 .q7-picture {
   position: absolute;
   top: 30px;
@@ -1652,6 +1650,31 @@ html, body {
   pointer-events: none;
   user-select: none;
 }
+/* Occupies the exact same footprint as .q7-picture (same top-left anchor
+   against .q-content) so swapping the two after the answer lands in the
+   same visual spot instead of jumping to wherever .s26-left's own in-flow
+   box happens to sit. */
+.s26-left .qt-teacher-col {
+  position: absolute;
+  bottom: 42px;
+  left: 420px;
+  width: 40%;
+  margin: 0;
+  /* row-reverse (not row): in this RTL page, row-reverse puts the FIRST
+     DOM child (the bubble) at the physical left and the second (the
+     teacher image) at the right — bubble beside the teacher, not stacked
+     above it like the base .qt-teacher-col (column) layout. */
+  flex-direction: row-reverse;
+  align-items: center;
+}
+.s26-left .qt-bubble {
+  position: absolute;
+  width: 55%;
+  margin-bottom: 365px;
+  margin-left: -250px;
+}
+.s26-left .qt-teacher-img { width: 57%; margin: 0; display: block; }
+[data-screen="26"] .qt-bubble-text { top: 22px; right: 14px; width: 420px; }
 
 /* ---------- Drag & drop (screen 26) ----------
    One unified table with a single "תיאור שלב" header column. Both the

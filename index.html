@@ -10,7 +10,20 @@
      the browser's own <img> lazy-load candidates, so without this hint they
      only start fetching the first time their class is actually painted,
      which can lose a race against an automated screenshot/review capture
-     that doesn't wait for network-loaded image content. -->
+     that doesn't wait for network-loaded image content.
+
+     Every real <img> in the page, on the other hand, DOES carry
+     loading="lazy" (added below on all ~100 of them). All 29 screens live
+     in the DOM at once (only .active toggles which one is display:block),
+     so without it the browser would fire off every screen's background
+     image at first paint — 29 screens' worth of requests competing for
+     bandwidth with whichever video/image the learner is actually looking
+     at right now, which is exactly what was making both video playback and
+     graphics loading feel slow/stuck. loading="lazy" on an <img> whose
+     ancestor is display:none is deferred until that ancestor becomes
+     visible, so each screen's own image only starts fetching when goTo()
+     actually reveals it. -->
+
 <link rel="preload" as="image" href="assets/images/btn-submit-sprite-normal.png">
 <link rel="preload" as="image" href="assets/images/btn-submit-sprite-hover.png">
 <link rel="preload" as="image" href="assets/images/Next_Btn.png">
@@ -38,7 +51,7 @@
 <!-- ================= SCREEN 2 — וידאו: לילה שקט, הבהוב פנסים (שקפים 3-5) ================= -->
 <section class="screen" data-screen="2" tabindex="-1">
   <div class="textbox1-bg-crop" id="textbox-bg-s2">
-    <img class="textbox1-bg" src="assets/images/textbox1.png" alt="">
+    <img loading="lazy" class="textbox1-bg" src="assets/images/textbox1.png" alt="">
   </div>
   <div class="textbox1-wrap" id="textbox-s2">
     <div class="textbox1-content" id="textbox-content-s2">
@@ -46,7 +59,7 @@
     </div>
   </div>
   <div class="video-wrap" data-video-screen="2">
-    <video class="video-el" src="assets/videos/p-3-4.mp4#t=0.001" playsinline preload="auto" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"></video>
+    <video class="video-el" playsinline preload="metadata" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"><source src="assets/videos/p-3-4.mp4#t=0.001" type="video/mp4"></video>
     <div class="video-caption hidden"><p></p></div>
     <button class="play-btn-big" onclick="playVideo(2)" aria-label="הפעל סרטון"></button>
     <div class="vctrls" dir="ltr">
@@ -66,9 +79,9 @@
 
 <!-- ================= SCREEN 3 — הסבר: המורה מציעה לחקור (שקף 6) ================= -->
 <section class="screen" data-screen="3" tabindex="-1">
-  <img class="screen-bg" src="assets/images/Background3.jpg" alt="">
+  <img loading="lazy" class="screen-bg" src="assets/images/Background3.jpg" alt="">
   <div class="textbox1-bg-crop" id="textbox-bg-s3">
-    <img class="textbox1-bg" src="assets/images/textbox1.png" alt="">
+    <img loading="lazy" class="textbox1-bg" src="assets/images/textbox1.png" alt="">
   </div>
   <div class="textbox1-wrap" id="textbox-s3">
     <div class="textbox1-content" id="textbox-content-s3">
@@ -81,7 +94,7 @@
 
 <!-- ================= SCREEN 4 — לוח רעיונות, 7 דמויות (שקפים 7-14) — RevealTilesGroup ================= -->
 <section class="screen" data-screen="4" tabindex="-1">
-  <img class="screen-bg" src="assets/images/Background4.jpg" alt="">
+  <img loading="lazy" class="screen-bg" src="assets/images/Background4.jpg" alt="">
   <div class="rtg-teacher-char" aria-hidden="true"></div>
   <div class="rtg-bubble2">
     <div class="rtg-intro-text">"מה לדעתכם יכול לגרום להבהוב האורות בשכונה? כל רעיון מתקבל בברכה"<br><strong>לחצו על תמונות התלמידים והתלמידות וגלו מה היו הרעיונות שלהם.</strong></div>
@@ -124,7 +137,7 @@
 <!-- ================= SCREEN 5 — וידאו: המורה מסכמת רעיונות (שקף 15) ================= -->
 <section class="screen" data-screen="5" tabindex="-1">
   <div class="video-wrap" data-video-screen="5">
-    <video class="video-el" src="assets/videos/video_page_15.mp4#t=0.001" playsinline preload="auto" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"></video>
+    <video class="video-el" playsinline preload="metadata" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"><source src="assets/videos/video_page_15.mp4#t=0.001" type="video/mp4"></video>
     <div class="video-caption hidden"><p></p></div>
     <button class="play-btn-big" onclick="playVideo(5)" aria-label="הפעל סרטון"></button>
     <div class="vctrls" dir="ltr">
@@ -144,11 +157,11 @@
 
 <!-- ================= SCREEN 6 — שאלה 1 — טבלת מיון (שקפים 16-17) ================= -->
 <section class="screen" data-screen="6" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="q1-picture" aria-hidden="true"></div>
     <div class="q-context">
       <h2 class="q-title">שאלה 1</h2>
@@ -192,7 +205,7 @@
 <!-- ================= SCREEN 7 — וידאו: מעבר למשימת חקר (שקף 18) ================= -->
 <section class="screen" data-screen="7" tabindex="-1">
   <div class="video-wrap" data-video-screen="7">
-    <video class="video-el" src="assets/videos/p-18.mp4#t=0.001" playsinline preload="auto" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"></video>
+    <video class="video-el" playsinline preload="metadata" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"><source src="assets/videos/p-18.mp4#t=0.001" type="video/mp4"></video>
     <div class="video-caption hidden"><p></p></div>
     <button class="play-btn-big" onclick="playVideo(7)" aria-label="הפעל סרטון"></button>
     <div class="vctrls" dir="ltr">
@@ -213,8 +226,8 @@
 <!-- ================= SCREEN 8 — הסבר: חלוקה ל-3 קבוצות (שקף 19) ================= -->
 <section class="screen" data-screen="8" tabindex="-1">
   <video class="screen-bg-video" src="assets/videos/video_page_8.mp4" autoplay muted loop playsinline></video>
-  <img class="textbox1-strip-el" id="textbox-strip-s8" src="assets/images/textbox1-strip.png" alt="">
-  <img class="textbox1-corner-el" id="textbox-corner-s8" src="assets/images/textbox1-corner.png" alt="">
+  <img loading="lazy" class="textbox1-strip-el" id="textbox-strip-s8" src="assets/images/textbox1-strip.png" alt="">
+  <img loading="lazy" class="textbox1-corner-el" id="textbox-corner-s8" src="assets/images/textbox1-corner.png" alt="">
   <div class="textbox1-wrap" id="textbox-s8">
     <div class="textbox1-content" id="textbox-content-s8">
       <p>רונית המורה מחלקת את הכיתה לשלוש קבוצות חקר. כל קבוצה תאסוף ראיות (נתונים) על אחת ההשערות:</p>
@@ -227,28 +240,28 @@
 
 <!-- ================= SCREEN 9 — נתוני קבוצה א' (שקף 20, ללא שאלה — השאלה עברה למסך 10) ================= -->
 <section class="screen" data-screen="9" tabindex="-1">
-  <img class="screen-bg s9-bg-flip" src="assets/images/Background13.jpg" alt="">
+  <img loading="lazy" class="screen-bg s9-bg-flip" src="assets/images/Background13.jpg" alt="">
   <div class="textbox1-bg-crop" id="textbox-bg-s9">
-    <img class="textbox1-bg" src="assets/images/textbox1.png" alt="">
+    <img loading="lazy" class="textbox1-bg" src="assets/images/textbox1.png" alt="">
   </div>
   <div class="textbox1-wrap" id="textbox-s9">
     <div class="textbox1-content" id="textbox-content-s9">
       <p><strong>קבוצה א' חקרה את ההשערה שברקים גורמים לאורות להבהב. אלה הנתונים שאספה:</strong><br>השמיים היו בהירים לחלוטין, לא נשמע רעם, ואפליקציית מזג האוויר הראתה שאין סיכוי לגשם באזור:</p>
     </div>
   </div>
-  <img class="s9-weather-img-standalone" src="assets/images/q2_picture.png" alt="">
+  <img loading="lazy" class="s9-weather-img-standalone" src="assets/images/q2_picture.png" alt="">
   <button class="nav-btn nav-prev" onclick="goBack()" aria-label="חזרה"></button>
   <button class="nav-btn nav-next hidden" onclick="advanceScreen()" aria-label="המשך"></button>
 </section>
 
 <!-- ================= SCREEN 10 — שאלה 2 — קבוצה א' ================= -->
 <section class="screen" data-screen="10" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background7.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background7.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleReminderPopup(this)"><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">תזכורת</span></button>
+  <button class="sim-reopen-btn" onclick="toggleReminderPopup(this)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">תזכורת</span></button>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s9-row s10-row-solo">
       <div class="s9-left">
         <h2 class="q-title">שאלה 2</h2>
@@ -261,7 +274,7 @@
         </div>
       </div>
     </div>
-    <img class="s9-children-img" src="assets/images/children.png" alt="">
+    <img loading="lazy" class="s9-children-img" src="assets/images/children.png" alt="">
   </div>
   <button class="btn-continue" id="q-check-10" disabled onclick="qCheck(10)">האם צדקתי?</button>
   <button class="nav-btn nav-prev" onclick="goBack()" aria-label="חזרה"></button>
@@ -271,7 +284,7 @@
 <!-- ================= SCREEN 11 — וידאו: קבוצה ב' — השערת חימום (שקף 22) ================= -->
 <section class="screen" data-screen="11" tabindex="-1">
   <div class="textbox1-bg-crop" id="textbox-bg-s11">
-    <img class="textbox1-bg" src="assets/images/textbox1.png" alt="">
+    <img loading="lazy" class="textbox1-bg" src="assets/images/textbox1.png" alt="">
   </div>
   <div class="textbox1-wrap" id="textbox-s11">
     <div class="textbox1-content" id="textbox-content-s11">
@@ -279,7 +292,7 @@
     </div>
   </div>
   <div class="video-wrap" data-video-screen="11">
-    <video class="video-el" src="assets/videos/p22.mp4#t=0.001" playsinline preload="auto" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"></video>
+    <video class="video-el" playsinline preload="metadata" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"><source src="assets/videos/p22.mp4#t=0.001" type="video/mp4"></video>
     <div class="video-caption hidden"><p></p></div>
     <button class="play-btn-big" onclick="playVideo(11)" aria-label="הפעל סרטון"></button>
     <div class="vctrls" dir="ltr">
@@ -299,8 +312,8 @@
 
 <!-- ================= SCREEN 12 — ישומון: סימולציית נורה מתחממת (שקף 23) ================= -->
 <section class="screen" data-screen="12" tabindex="-1">
-  <img class="screen-bg" src="assets/images/Background9.jpeg" alt="">
-  <img class="textbox1-right-bg" src="assets/images/textbox1-right.png" alt="">
+  <img loading="lazy" class="screen-bg" src="assets/images/Background9.jpeg" alt="">
+  <img loading="lazy" class="textbox1-right-bg" src="assets/images/textbox1-right.png" alt="">
   <div class="sim-instructions">
     <strong>הפעילו את הסימולציה:</strong>
     <ol>
@@ -319,12 +332,12 @@
 
 <!-- ================= SCREEN 13 — שאלה 3.א (שקפים 24-25) ================= -->
 <section class="screen" data-screen="13" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.א</h2>
@@ -339,11 +352,11 @@
       <div class="s12-left">
         <div class="s12-graph-title">גרף טמפרטורת הנורה לאורך זמן</div>
         <div class="q-imgframe">
-          <img class="s12-graph-img" src="assets/images/q3_picture.png"
+          <img loading="lazy" class="s12-graph-img" src="assets/images/q3_picture.png"
             alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב.">
           <button class="img-zoom-btn" data-zoom-src="assets/images/q3_picture.png"
             data-zoom-alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב." aria-label="הגדלת התמונה">
-            <img src="assets/images/zoom.png" alt="">
+            <img loading="lazy" src="assets/images/zoom.png" alt="">
           </button>
         </div>
       </div>
@@ -356,12 +369,12 @@
 
 <!-- ================= SCREEN 14 — שאלה 3.ב (שקפים 26-27) ================= -->
 <section class="screen" data-screen="14" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.ב</h2>
@@ -376,11 +389,11 @@
       <div class="s12-left">
         <div class="s12-graph-title">גרף טמפרטורת הנורה לאורך זמן</div>
         <div class="q-imgframe">
-          <img class="s12-graph-img" src="assets/images/q3_picture.png"
+          <img loading="lazy" class="s12-graph-img" src="assets/images/q3_picture.png"
             alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב.">
           <button class="img-zoom-btn" data-zoom-src="assets/images/q3_picture.png"
             data-zoom-alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב." aria-label="הגדלת התמונה">
-            <img src="assets/images/zoom.png" alt="">
+            <img loading="lazy" src="assets/images/zoom.png" alt="">
           </button>
         </div>
       </div>
@@ -393,12 +406,12 @@
 
 <!-- ================= SCREEN 15 — שאלה 3.ג (שקפים 28-29) ================= -->
 <section class="screen" data-screen="15" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.ג</h2>
@@ -413,11 +426,11 @@
       <div class="s12-left">
         <div class="s12-graph-title">גרף טמפרטורת הנורה לאורך זמן</div>
         <div class="q-imgframe">
-          <img class="s12-graph-img" src="assets/images/q3_picture.png"
+          <img loading="lazy" class="s12-graph-img" src="assets/images/q3_picture.png"
             alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב.">
           <button class="img-zoom-btn" data-zoom-src="assets/images/q3_picture.png"
             data-zoom-alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב." aria-label="הגדלת התמונה">
-            <img src="assets/images/zoom.png" alt="">
+            <img loading="lazy" src="assets/images/zoom.png" alt="">
           </button>
         </div>
       </div>
@@ -430,12 +443,12 @@
 
 <!-- ================= SCREEN 16 — שאלה 3.ד (שקפים 30-31) ================= -->
 <section class="screen" data-screen="16" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.ד</h2>
@@ -450,11 +463,11 @@
       <div class="s12-left">
         <div class="s12-graph-title">גרף טמפרטורת הנורה לאורך זמן</div>
         <div class="q-imgframe">
-          <img class="s12-graph-img" src="assets/images/q3_picture.png"
+          <img loading="lazy" class="s12-graph-img" src="assets/images/q3_picture.png"
             alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב.">
           <button class="img-zoom-btn" data-zoom-src="assets/images/q3_picture.png"
             data-zoom-alt="גרף קווי המציג את שינוי טמפרטורת הנורה לאורך זמן. הטמפרטורה עולה עד ל-120 מעלות צלזיוס, לאחר מכן יורדת בהדרגה עד ל-25 מעלות צלזיוס ואז עולה שוב." aria-label="הגדלת התמונה">
-            <img src="assets/images/zoom.png" alt="">
+            <img loading="lazy" src="assets/images/zoom.png" alt="">
           </button>
         </div>
       </div>
@@ -468,7 +481,7 @@
 <!-- ================= SCREEN 17 — וידאו: חשמלאית בודקת ארון חשמל (שקף 32) ================= -->
 <section class="screen" data-screen="17" tabindex="-1">
   <div class="textbox1-bg-crop" id="textbox-bg-s17">
-    <img class="textbox1-bg" src="assets/images/textbox1.png" alt="">
+    <img loading="lazy" class="textbox1-bg" src="assets/images/textbox1.png" alt="">
   </div>
   <div class="textbox1-wrap" id="textbox-s17">
     <div class="textbox1-content" id="textbox-content-s17">
@@ -476,7 +489,7 @@
     </div>
   </div>
   <div class="video-wrap" data-video-screen="17">
-    <video class="video-el" src="assets/videos/p32.mp4#t=0.001" playsinline preload="auto" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"></video>
+    <video class="video-el" playsinline preload="metadata" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"><source src="assets/videos/p32.mp4#t=0.001" type="video/mp4"></video>
     <div class="video-caption hidden"><p></p></div>
     <button class="play-btn-big" onclick="playVideo(17)" aria-label="הפעל סרטון"></button>
     <div class="vctrls" dir="ltr">
@@ -496,9 +509,9 @@
 
 <!-- ================= SCREEN 18 — ישומון: סימולציית חיבור רופף (שקף 33) ================= -->
 <section class="screen" data-screen="18" tabindex="-1">
-  <img class="screen-bg" src="assets/images/Background9.jpeg" alt="">
-  <img class="textbox1-strip-el" id="textbox-strip-s18" src="assets/images/textbox1-strip.png" alt="">
-  <img class="textbox1-corner-el" id="textbox-corner-s18" src="assets/images/textbox1-corner.png" alt="">
+  <img loading="lazy" class="screen-bg" src="assets/images/Background9.jpeg" alt="">
+  <img loading="lazy" class="textbox1-strip-el" id="textbox-strip-s18" src="assets/images/textbox1-strip.png" alt="">
+  <img loading="lazy" class="textbox1-corner-el" id="textbox-corner-s18" src="assets/images/textbox1-corner.png" alt="">
   <div class="textbox1-wrap" id="textbox-s18">
     <div class="textbox1-content" id="textbox-content-s18">
       <p><strong>בלוח החשמל שלפניכם יש חיבורים תקינים וחיבורים רופפים. התבוננו בהתנהגות הנורות ונסו לזהות את החיבורים הבעייתיים.</strong></p>
@@ -514,12 +527,12 @@
 
 <!-- ================= SCREEN 19 — שאלה 4.א — רב-בחירה (שקפים 34-35) ================= -->
 <section class="screen" data-screen="19" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,18)"><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,18)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 4.א</h2>
@@ -535,11 +548,11 @@
       <div class="s12-left">
         <div class="s12-graph-title">תרשים לוח החשמל בסימולציה</div>
         <div class="q-imgframe">
-          <img class="s12-graph-img" src="assets/images/q4_picture.png"
+          <img loading="lazy" class="s12-graph-img" src="assets/images/q4_picture.png"
             alt="תרשים לוח חשמל עם חמישה מפסקים ממוספרים 1 עד 5, נורה מעל כל מפסק, מפסק מספר 5 מסומן בכתום כחיבור הנבדק, ולצדו מד זרם (אמפרמטר) המציג את עוצמת הזרם.">
           <button class="img-zoom-btn" data-zoom-src="assets/images/q4_picture.png"
             data-zoom-alt="תרשים לוח חשמל עם חמישה מפסקים ממוספרים 1 עד 5, נורה מעל כל מפסק, מפסק מספר 5 מסומן בכתום כחיבור הנבדק, ולצדו מד זרם (אמפרמטר) המציג את עוצמת הזרם." aria-label="הגדלת התמונה">
-            <img src="assets/images/zoom.png" alt="">
+            <img loading="lazy" src="assets/images/zoom.png" alt="">
           </button>
         </div>
       </div>
@@ -552,12 +565,12 @@
 
 <!-- ================= SCREEN 20 — שאלה 4.ב — יחיד-נכון (שקפים 36-37) ================= -->
 <section class="screen" data-screen="20" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,18)"><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,18)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 4.ב</h2>
@@ -572,11 +585,11 @@
       <div class="s12-left">
         <div class="s12-graph-title">תרשים לוח החשמל בסימולציה</div>
         <div class="q-imgframe">
-          <img class="s12-graph-img" src="assets/images/q4_picture.png"
+          <img loading="lazy" class="s12-graph-img" src="assets/images/q4_picture.png"
             alt="תרשים לוח חשמל עם חמישה מפסקים ממוספרים 1 עד 5, נורה מעל כל מפסק, מפסק מספר 5 מסומן בכתום כחיבור הנבדק, ולצדו מד זרם (אמפרמטר) המציג את עוצמת הזרם.">
           <button class="img-zoom-btn" data-zoom-src="assets/images/q4_picture.png"
             data-zoom-alt="תרשים לוח חשמל עם חמישה מפסקים ממוספרים 1 עד 5, נורה מעל כל מפסק, מפסק מספר 5 מסומן בכתום כחיבור הנבדק, ולצדו מד זרם (אמפרמטר) המציג את עוצמת הזרם." aria-label="הגדלת התמונה">
-            <img src="assets/images/zoom.png" alt="">
+            <img loading="lazy" src="assets/images/zoom.png" alt="">
           </button>
         </div>
       </div>
@@ -589,9 +602,9 @@
 
 <!-- ================= SCREEN 21 — כרטיסיות ממצאים, 3 קבוצות (שקפים 38-39) — RevealTilesGroup ================= -->
 <section class="screen" data-screen="21" tabindex="-1">
-  <img class="screen-bg" src="assets/images/Background12.jpeg" alt="">
+  <img loading="lazy" class="screen-bg" src="assets/images/Background12.jpeg" alt="">
   <div class="textbox1-bg-crop" id="textbox-bg-s21">
-    <img class="textbox1-bg" src="assets/images/textbox1.png" alt="">
+    <img loading="lazy" class="textbox1-bg" src="assets/images/textbox1.png" alt="">
   </div>
   <div class="textbox1-wrap" id="textbox-s21">
     <div class="textbox1-content" id="textbox-content-s21">
@@ -648,15 +661,15 @@
 
 <!-- ================= SCREEN 22 — שאלה 5 — רב-בחירה (שקפים 40-41) ================= -->
 <section class="screen" data-screen="22" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="qt-row">
       <div class="qt-teacher-col">
-        <div class="qt-bubble"><img class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">מצוין, עכשיו אנחנו יודעים מה גרם להבהובי האורות. נמשיך לחקור בכדי להשלים את התמונה.</span></div>
-        <img class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
+        <div class="qt-bubble"><img loading="lazy" class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">מצוין, עכשיו אנחנו יודעים מה גרם להבהובי האורות. נמשיך לחקור בכדי להשלים את התמונה.</span></div>
+        <img loading="lazy" class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
       </div>
       <div class="qt-question-col">
         <h2 class="q-title">שאלה 5</h2>
@@ -678,15 +691,15 @@
 
 <!-- ================= SCREEN 23 — שאלה 6 — יחיד-נכון (שקפים 42-43, אין מוקאפ) ================= -->
 <section class="screen" data-screen="23" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="qt-row">
       <div class="qt-teacher-col">
-        <div class="qt-bubble"><img class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">כאשר מגלים בעזרת ראיות מדעיות שקיימת תקלה מסוכנת, חשוב לדעת איך לפעול באחריות.</span></div>
-        <img class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
+        <div class="qt-bubble"><img loading="lazy" class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">כאשר מגלים בעזרת ראיות מדעיות שקיימת תקלה מסוכנת, חשוב לדעת איך לפעול באחריות.</span></div>
+        <img loading="lazy" class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
       </div>
       <div class="qt-question-col">
         <h2 class="q-title">שאלה 6</h2>
@@ -707,9 +720,9 @@
 
 <!-- ================= SCREEN 24 — הסבר: שכנים מדווחים (שקף 44) ================= -->
 <section class="screen" data-screen="24" tabindex="-1">
-  <img class="screen-bg" src="assets/images/Background11.jpeg" alt="">
-  <img class="textbox1-strip-el" id="textbox-strip-s24" src="assets/images/textbox1-strip.png" alt="">
-  <img class="textbox1-corner-el" id="textbox-corner-s24" src="assets/images/textbox1-corner.png" alt="">
+  <img loading="lazy" class="screen-bg" src="assets/images/Background11.jpeg" alt="">
+  <img loading="lazy" class="textbox1-strip-el" id="textbox-strip-s24" src="assets/images/textbox1-strip.png" alt="">
+  <img loading="lazy" class="textbox1-corner-el" id="textbox-corner-s24" src="assets/images/textbox1-corner.png" alt="">
   <div class="textbox1-wrap" id="textbox-s24">
     <div class="textbox1-content" id="textbox-content-s24">
       <p>השכנים מדווחים לחברת החשמל על החיבור הרופף וצוותי החברה מתחילים לטפל בתקלה.</p>
@@ -723,7 +736,7 @@
 <!-- ================= SCREEN 25 — וידאו: המורה מסכמת את התהליך (שקף 45, אין מוקאפ) ================= -->
 <section class="screen" data-screen="25" tabindex="-1">
   <div class="video-wrap" data-video-screen="25">
-    <video class="video-el" src="assets/videos/video_page_45.mp4#t=0.001" playsinline preload="auto" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"></video>
+    <video class="video-el" playsinline preload="metadata" disablepictureinpicture controlsList="nodownload noremoteplayback nofullscreen noplaybackrate"><source src="assets/videos/video_page_45.mp4#t=0.001" type="video/mp4"></video>
     <div class="video-caption hidden"><p></p></div>
     <button class="play-btn-big" onclick="playVideo(25)" aria-label="הפעל סרטון"></button>
     <div class="vctrls" dir="ltr">
@@ -743,14 +756,13 @@
 
 <!-- ================= SCREEN 26 — שאלה 7 — רב-בחירה, המורה מופיעה אחרי המשוב (שקפים 46-47) ================= -->
 <section class="screen" data-screen="26" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
-    <img class="q7-picture" src="assets/images/q7_picture.png" alt="" aria-hidden="true">
-    <div class="qt-row">
-      <div class="qt-question-col">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <div class="s12-row">
+      <div class="s12-right">
         <h2 class="q-title">שאלה 7</h2>
         <div class="q-body">חשבו על הדרך שבה פתרנו את התעלומה, ו<strong>סמנו את <span class="q-highlight">כל</span> המשפטים המתארים נכון את החקר המדעי.</strong></div>
         <div class="q-answers" role="group" aria-label="אפשרויות תשובה">
@@ -760,9 +772,12 @@
           <div class="q-opt" data-multi data-id="4" role="checkbox" tabindex="0" aria-checked="false" onclick="qSelect(26,'4')"><span class="q-radio"></span>גם רעיונות שאי אפשר לבדוק הם רעיונות מדעיים כל עוד הם הגיוניים.</div>
         </div>
       </div>
-      <div class="qt-teacher-col" id="s26-teacher" style="display:none;">
-        <div class="qt-bubble"><img class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">כעת, אחרי שהבנו מה מאפיין חקר מדעי, בואו ננסה לשחזר את סדר הפעולות שביצענו בחקירה.</span></div>
-        <img class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
+      <div class="s12-left s26-left">
+        <img loading="lazy" class="q7-picture" src="assets/images/q7_picture.png" alt="" aria-hidden="true">
+        <div class="qt-teacher-col" id="s26-teacher" style="display:none;">
+          <div class="qt-bubble"><img loading="lazy" class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">כעת, אחרי שהבנו מה מאפיין חקר מדעי, בואו ננסה לשחזר את סדר הפעולות שביצענו בחקירה.</span></div>
+          <img loading="lazy" class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
+        </div>
       </div>
     </div>
   </div>
@@ -773,11 +788,11 @@
 
 <!-- ================= SCREEN 27 — שאלה 8 — גרירת שלבים (שקפים 48-49) ================= -->
 <section class="screen" data-screen="27" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <h2 class="q-title">שאלה 8</h2>
     <div class="q-body">כדי להבין מה גרם לתופעת הבהובי האורות בשכונה, פעלנו לפי תהליך מדעי מסודר. לפניכם שלבי התהליך, אך הם התערבבו. גררו את מספרי השלבים אל התאים הריקים שלצד כל שלב, כך שיתארו את סדר התהליך.</div>
     <div class="ddq-wrap">
@@ -827,15 +842,15 @@
 
 <!-- ================= SCREEN 28 — שאלה 9 — יחיד-נכון (שקפים 50-51, אין מוקאפ) ================= -->
 <section class="screen" data-screen="28" tabindex="-1">
-  <img class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
+  <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
   <div class="q-content">
-    <img class="q-bg-panel" src="assets/images/textbox2.png" alt="">
+    <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="qt-row">
       <div class="qt-teacher-col">
-        <div class="qt-bubble"><img class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">עבודה לפי שלבי התהליך המדעי הובילה אותנו למציאת הסבר מדעי לתופעת הבהובי האורות.</span></div>
-        <img class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
+        <div class="qt-bubble"><img loading="lazy" class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">עבודה לפי שלבי התהליך המדעי הובילה אותנו למציאת הסבר מדעי לתופעת הבהובי האורות.</span></div>
+        <img loading="lazy" class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
       </div>
       <div class="qt-question-col">
         <h2 class="q-title">שאלה 9</h2>
@@ -856,9 +871,9 @@
 
 <!-- ================= SCREEN 29 — סיום (שקף 52) ================= -->
 <section class="screen" data-screen="29" tabindex="-1">
-  <img class="screen-bg" src="assets/images/Background20.jpeg" alt="">
+  <img loading="lazy" class="screen-bg" src="assets/images/Background20.jpeg" alt="">
   <div class="completion-bubble">
-    <img class="completion-bubble-img" src="assets/images/textbox1-box.png" alt="">
+    <img loading="lazy" class="completion-bubble-img" src="assets/images/textbox1-box.png" alt="">
     <p>בסיום השיעור, הילדים עולים שוב אל הגבעה שממנה הכול התחיל. הם מביטים בשכונה ומבינים שהפעם הם לא רק פתרו תעלומה, אלא גם למדו דרך חדשה לחקור את העולם.</p>
   </div>
   <span id="completion-grade-display" style="display:none;">0</span>
@@ -890,7 +905,7 @@
 
 <div id="img-zoom-modal" role="dialog" aria-modal="true" aria-label="תצוגה מוגדלת" tabindex="-1">
   <div class="img-zoom-panel">
-    <button class="img-zoom-close" data-zoom-close aria-label="סגירה"><img class="img-zoom-close-icon img-zoom-close-icon-normal" src="assets/images/btn-help-close-normal.png" alt=""><img class="img-zoom-close-icon img-zoom-close-icon-hover" src="assets/images/btn-help-close-hover.png" alt=""></button>
+    <button class="img-zoom-close" data-zoom-close aria-label="סגירה"><img loading="lazy" class="img-zoom-close-icon img-zoom-close-icon-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="img-zoom-close-icon img-zoom-close-icon-hover" src="assets/images/btn-help-close-hover.png" alt=""></button>
     <div id="img-zoom-panel-body"></div>
   </div>
 </div>

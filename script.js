@@ -432,6 +432,12 @@ function initVideoControls(n) {
   video.addEventListener('timeupdate', function () {
     curEl.textContent = formatTime(video.currentTime);
     if (!seeking && video.duration) seek.value = String(Math.round((video.currentTime / video.duration) * 1000));
+    // Reveal forward nav a few seconds before the real end instead of only
+    // on 'ended' — confirmed in the Psifas reference lomda (screen 1) as a
+    // defense against embedded/QA-host playback where 'ended' can be late
+    // or, under an odd embed, never fire at all, otherwise stranding the
+    // learner on a screen that never lets them continue.
+    if (!videoEnded[n] && video.duration && video.duration - video.currentTime <= 3) onVideoEnded(n);
   });
   seek.addEventListener('input', function () {
     seeking = true;
@@ -961,24 +967,35 @@ function recordScore(key, points) {
    production script: "החץ יופיע 15 שנ' לאחר הפעלת הישומון").
    =================================================================== */
 const simLaunched = {};
+const simRevealed = {}; // n -> true once the 15s timer has actually fired (resume-state lock)
 function simLaunch(n) {
   if (simLaunched[n]) return;
   simLaunched[n] = true;
   const label = document.querySelector('.screen[data-screen="' + n + '"] .sim-placeholder-label');
   if (label) label.textContent = 'הסימולציה פועלת (ממתין לקובץ אמיתי) — החץ יופיע בעוד 15 שניות';
-  setTimeout(function () { revealForwardNav(n); }, 15000);
+  setTimeout(function () { simRevealed[n] = true; revealForwardNav(n); }, 15000);
 }
 function resetSimScreen(n) {
   if (n !== 18) syncTextbox1(n); // no-op for screen 12; screen 18 uses fixed CSS positioning instead of the auto-height calc
   if (window.lomdaState.DONE[n]) return;
   const arrow = document.querySelector('.screen[data-screen="' + n + '"] .nav-next');
+  // Resume-state lock: once the timer has actually fired, keep the arrow
+  // visible on every re-entry instead of re-hiding it — the original code
+  // unconditionally hid the arrow on every entry but only ever (re)started
+  // the timer on the FIRST entry (guarded by simLaunched), so leaving
+  // screen 18 and coming back after the timer already fired left the arrow
+  // hidden forever with nothing left to reveal it again.
+  if (simRevealed[n]) {
+    if (arrow) { arrow.classList.remove('hidden'); arrow.classList.add('blink'); }
+    return;
+  }
   if (arrow) arrow.classList.add('hidden');
   // Screens 12 & 18: the real app is embedded inline on the tablet (no
   // click-to-launch placeholder), so start the same 15s reveal timer on
   // entry instead of waiting for a simLaunch() click.
   if ((n === 12 || n === 18) && !simLaunched[n]) {
     simLaunched[n] = true;
-    setTimeout(function () { revealForwardNav(n); }, 15000);
+    setTimeout(function () { simRevealed[n] = true; revealForwardNav(n); }, 15000);
   }
 }
 
@@ -1520,8 +1537,11 @@ qInitConfig(28, {
   window.qCheck = function (n) {
     originalQCheck(n);
     if (n === 26 && qState[26] && qState[26].done) {
+      // .s12-left is a fixed-width column (same as every other split-question
+      // screen), so swapping its contents never resizes/reflows .s12-right —
+      // simple display toggle, matching the picture it's replacing.
       const teacher = document.getElementById('s26-teacher');
-      if (teacher) teacher.style.display = 'block';
+      if (teacher) teacher.style.display = 'flex'; // matches .qt-teacher-col's own display:flex
       const pic = document.querySelector('[data-screen="26"] .q7-picture');
       if (pic) pic.style.display = 'none';
       setTimeout(function () { revealForwardNav(26); }, 400);
