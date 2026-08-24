@@ -14,10 +14,22 @@ window.lomdaState = {
   DONE: {}            // screenNumber -> resolved boolean (resume-state lock)
 };
 
-/* ---------------- Canvas scaling ---------------- */
+/* ---------------- Canvas scaling ----------------
+   Embedding this page in an external QA/review "system" iframe means the
+   wrapper's own layout isn't always settled at the instant this first runs
+   (unlike opening the file directly, where the browser window is already
+   correctly sized) — and resizing an iframe from its parent page doesn't
+   reliably fire a 'resize' event inside the iframe's own window in every
+   browser, so a wrong initial scale can otherwise never self-correct. The
+   visible symptom is exactly "the page doesn't always load well": content
+   clipped/misplaced, or clicks landing at coordinates that don't match what
+   rendered. Defend on three fronts: skip computing against a not-yet-laid-out
+   0×0 viewport, re-run a few times over the following seconds regardless of
+   whether 'resize' ever fires, and watch the layout viewport itself via
+   ResizeObserver (catches an iframe-parent resize that skips 'resize'). */
 function scaleApp() {
   const app = document.getElementById('app');
-  if (!app) return;
+  if (!app || !window.innerWidth || !window.innerHeight) return;
   const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
   const left = (window.innerWidth - 1920 * scale) / 2;
   const top = (window.innerHeight - 1080 * scale) / 2;
@@ -27,8 +39,10 @@ function scaleApp() {
 }
 window.addEventListener('resize', scaleApp);
 window.addEventListener('load', scaleApp);
+document.addEventListener('visibilitychange', function () { if (!document.hidden) scaleApp(); });
 requestAnimationFrame(scaleApp);
-setTimeout(scaleApp, 300);
+[100, 300, 800, 1500, 3000].forEach(function (ms) { setTimeout(scaleApp, ms); });
+if (window.ResizeObserver) new ResizeObserver(scaleApp).observe(document.documentElement);
 
 /* ---------------- Navigation ---------------- */
 function closeAllOverlays() {
@@ -166,10 +180,34 @@ function notifyDev(n) {
    cross-frame DOM/script access, so this is the only reliable channel). */
 window.addEventListener('message', function (e) {
   if (e.data && e.data.type === 'DEV_GOTO' && typeof e.data.screen === 'number') {
+    handshakeAcked = true;
     goTo(e.data.screen);
   }
 });
-document.addEventListener('DOMContentLoaded', function () { notifyDev(1); });
+/* A single one-shot "I'm ready" postMessage can silently go missing if the
+   host page (an external QA/review "system") attaches its own message
+   listener a moment after this fires — there's no delivery guarantee, and
+   no error either way. Re-announce a few times until the host actually
+   replies with a DEV_GOTO, instead of firing once and hoping. */
+let handshakeAcked = false;
+function announceReady() {
+  if (handshakeAcked) return;
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'DEV_READY', total: TOTAL_SCREENS }, '*');
+    }
+  } catch (e) {}
+}
+document.addEventListener('DOMContentLoaded', function () {
+  notifyDev(1);
+  announceReady();
+});
+window.addEventListener('load', announceReady);
+let handshakeTries = 0;
+const handshakeTimer = setInterval(function () {
+  announceReady();
+  if (handshakeAcked || ++handshakeTries > 20) clearInterval(handshakeTimer);
+}, 400);
 
 /* Self-healing screen-entry watcher. Every per-screen setup step (sizing
    the textbox1 narration card, restarting a looping background video,
@@ -327,6 +365,8 @@ const VIDEO_CAPTIONS = {
   ]
 };
 
+const videoCaptionsEnabled = {}; // n -> boolean, toggled by the vctrls CC button; defaults true
+
 function setupVideoCaptions(n) {
   const cues = VIDEO_CAPTIONS[n];
   const wrap = document.querySelector('.video-wrap[data-video-screen="' + n + '"]');
@@ -334,7 +374,9 @@ function setupVideoCaptions(n) {
   const capEl = wrap && wrap.querySelector('.video-caption');
   const capText = capEl && capEl.querySelector('p');
   if (!cues || !video || !capEl || !capText) return;
+  if (!(n in videoCaptionsEnabled)) videoCaptionsEnabled[n] = true;
   video.addEventListener('timeupdate', function () {
+    if (!videoCaptionsEnabled[n]) { capEl.classList.add('hidden'); return; }
     const t = video.currentTime;
     const cue = cues.find(function (c) { return t >= c[0] && t < c[1]; });
     if (cue) {
@@ -343,6 +385,89 @@ function setupVideoCaptions(n) {
     } else {
       capEl.classList.add('hidden');
     }
+  });
+}
+
+/* Custom playback bar (.vctrls) — replaces native <video controls> so the
+   RTL screen keeps a consistent look across browsers. Wired once per video
+   the first time playVideo() starts it; videoControlsInit guards against
+   re-binding listeners if the learner re-enters the screen. */
+const videoControlsInit = {};
+function formatTime(sec) {
+  if (!isFinite(sec) || sec < 0) sec = 0;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+function initVideoControls(n) {
+  if (videoControlsInit[n]) return;
+  videoControlsInit[n] = true;
+  const wrap = document.querySelector('.video-wrap[data-video-screen="' + n + '"]');
+  const video = wrap && wrap.querySelector('video');
+  const bar = wrap && wrap.querySelector('.vctrls');
+  if (!video || !bar) return;
+
+  const playBtn = bar.querySelector('[data-play]');
+  const curEl = bar.querySelector('[data-cur]');
+  const durEl = bar.querySelector('[data-dur]');
+  const seek = bar.querySelector('[data-seek]');
+  const ccBtn = bar.querySelector('[data-cc]');
+  const muteBtn = bar.querySelector('[data-mute]');
+  const vol = bar.querySelector('[data-vol]');
+  const fullBtn = bar.querySelector('[data-full]');
+  let seeking = false;
+
+  function syncPlayIcon() { playBtn.textContent = video.paused ? '▶' : '⏸'; }
+  video.addEventListener('play', syncPlayIcon);
+  video.addEventListener('pause', syncPlayIcon);
+  video.addEventListener('ended', function () { onVideoEnded(n); });
+  playBtn.addEventListener('click', function () {
+    // Route through playVideo() so the poster overlay / resume-state lock
+    // stay correct even if the learner starts playback from the bar itself
+    // instead of the big poster button.
+    if (video.paused) playVideo(n); else video.pause();
+  });
+
+  video.addEventListener('loadedmetadata', function () { durEl.textContent = formatTime(video.duration); });
+  video.addEventListener('timeupdate', function () {
+    curEl.textContent = formatTime(video.currentTime);
+    if (!seeking && video.duration) seek.value = String(Math.round((video.currentTime / video.duration) * 1000));
+  });
+  seek.addEventListener('input', function () {
+    seeking = true;
+    if (video.duration) curEl.textContent = formatTime((seek.value / 1000) * video.duration);
+  });
+  seek.addEventListener('change', function () {
+    if (video.duration) video.currentTime = (seek.value / 1000) * video.duration;
+    seeking = false;
+  });
+
+  if (!(n in videoCaptionsEnabled)) videoCaptionsEnabled[n] = true;
+  ccBtn.classList.toggle('is-off', !videoCaptionsEnabled[n]);
+  ccBtn.addEventListener('click', function () {
+    videoCaptionsEnabled[n] = !videoCaptionsEnabled[n];
+    ccBtn.classList.toggle('is-off', !videoCaptionsEnabled[n]);
+    ccBtn.setAttribute('aria-pressed', String(videoCaptionsEnabled[n]));
+  });
+
+  function syncMuteIcon() { muteBtn.textContent = video.muted || video.volume === 0 ? '🔇' : '🔊'; }
+  muteBtn.addEventListener('click', function () {
+    video.muted = !video.muted;
+    if (!video.muted && video.volume === 0) video.volume = 1;
+    vol.value = video.muted ? '0' : String(Math.round(video.volume * 100));
+    syncMuteIcon();
+  });
+  vol.addEventListener('input', function () {
+    video.volume = vol.value / 100;
+    video.muted = video.volume === 0;
+    syncMuteIcon();
+  });
+  syncMuteIcon();
+
+  fullBtn.addEventListener('click', function () {
+    const target = wrap;
+    if (document.fullscreenElement) { document.exitFullscreen().catch(function () {}); }
+    else if (target.requestFullscreen) { target.requestFullscreen().catch(function () {}); }
   });
 }
 
@@ -360,8 +485,8 @@ function playVideo(n) {
     return;
   }
   if (video) {
+    initVideoControls(n); // no-op if already bound at page init
     video.play().catch(function () {});
-    video.addEventListener('ended', function () { onVideoEnded(n); }, { once: true });
   }
 }
 
@@ -1411,6 +1536,12 @@ document.addEventListener('DOMContentLoaded', function () {
   if (first) first.classList.add('active');
   resetScreenState(1);
   Object.keys(VIDEO_CAPTIONS).forEach(function (n) { setupVideoCaptions(Number(n)); });
+  // Bind the .vctrls bar up front for every video screen (not on first play) —
+  // the bar itself is always visible in the markup (no .hidden gate), so its
+  // own buttons must work even if the big play-overlay is never clicked.
+  document.querySelectorAll('.video-wrap[data-video-screen]').forEach(function (wrap) {
+    initVideoControls(Number(wrap.getAttribute('data-video-screen')));
+  });
 });
 
 /* Webfonts can finish loading after first layout, changing text-wrap height

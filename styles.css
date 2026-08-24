@@ -355,6 +355,83 @@ html, body {
 .play-btn-big:hover { filter: brightness(1.08); }
 .play-btn-big.hidden { display: none; }
 
+/* Custom playback bar replacing native <video controls> — shown once
+   playback starts (playVideo() removes .hidden), wired up in script.js
+   (initVideoControls). */
+.vctrls {
+  position: absolute;
+  left: 150px;
+  right: 150px;
+  bottom: 0;
+  z-index: 14;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 22px;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, .78), rgba(0, 0, 0, .32));
+}
+.vctrls.hidden { display: none; }
+.vc-btn {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vc-btn:hover { background: rgba(255, 255, 255, .22); }
+.vc-btn:focus-visible { outline: var(--focus); outline-offset: 2px; }
+.vc-cc {
+  border-radius: 8px;
+  width: auto;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.vc-cc.is-off { background: rgba(255, 255, 255, .12); color: rgba(255, 255, 255, .5); }
+.vc-time {
+  flex: 0 0 auto;
+  color: #fff;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  min-width: 40px;
+  text-align: center;
+}
+.vc-seek, .vc-vol {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, .3);
+  cursor: pointer;
+}
+.vc-seek { flex: 1 1 auto; min-width: 0; }
+.vc-vol { flex: 0 0 auto; width: 90px; }
+.vc-seek::-webkit-slider-thumb, .vc-vol::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+}
+.vc-seek::-moz-range-thumb, .vc-vol::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+}
+
 /* ---------- textbox1 — top-right narration bubble ----------
    Plain version (screen 2 — short single line, fits the default crop as-is,
    no extension needed): just the crop + its image. */
