@@ -72,8 +72,9 @@
 <!-- ================= SCREEN 1 — פתיחה ================= -->
 <section class="screen active" data-screen="1" tabindex="-1">
   <div class="screen1-bg"></div>
+  <img loading="lazy" class="intro-logo" src="assets/images/white_logo.png" alt="">
   <div class="intro-title-panel">
-    <div class="intro-title-line1">הבהובי רעיונות</div>
+    <div class="intro-title-line1">הֲבָהוֹבֵי רעיונות</div>
     <h1 class="intro-title-line2">תעלומה בשכונה</h1>
   </div>
   <button class="intro-start-btn" onclick="goTo(2)">מתחילים</button>
@@ -116,7 +117,7 @@
   </div>
   <div class="textbox1-wrap" id="textbox-s3">
     <div class="textbox1-content" id="textbox-content-s3">
-      <p>למחרת, רונית המורה נכנסת לכיתה ומבינה שכולם מדברים בהתלהבות על התופעה המוזרה שקרתה אמש. היא מחליטה שזו הזדמנות לחקור יחד.</p>
+      <p>למחרת, המורה רונית נכנסת לכיתה ומבינה שכולם מדברים בהתלהבות על התופעה המוזרה שקרתה אמש. היא מחליטה שזו הזדמנות לחקור יחד.</p>
     </div>
   </div>
   <button class="nav-btn nav-prev" onclick="goBack()" aria-label="חזרה"></button>
@@ -128,7 +129,7 @@
   <img loading="lazy" class="screen-bg" src="assets/images/Background4.jpg" alt="">
   <div class="rtg-teacher-char" aria-hidden="true"></div>
   <div class="rtg-bubble2">
-    <div class="rtg-intro-text">"מה לדעתכם יכול לגרום להבהוב האורות בשכונה? כל רעיון מתקבל בברכה"<br><strong>לחצו על תמונות התלמידים והתלמידות וגלו מה היו הרעיונות שלהם.</strong></div>
+    <div class="rtg-intro-text">"מה לדעתכם יכול לגרום להַבְהוּב האורות בשכונה?<br>כל רעיון מתקבל בברכה"<br><strong>לחצו על תמונות התלמידים והתלמידות וגלו מה היו הרעיונות שלהם.</strong></div>
   </div>
   <div class="rtg-board empty"></div>
   <div class="rtg-tiles-round">
@@ -198,28 +199,37 @@
       <h2 class="q-title">שאלה 1</h2>
       <div class="q-body">קִבעו לגבי כל רעיון – אם הוא "מדעי" או "לא מדעי".</div>
       <div class="q1-row">
+      <div class="q1-icons-col" aria-hidden="true">
+        <span class="q1-icon" data-row="a"></span>
+        <span class="q1-icon" data-row="b"></span>
+        <span class="q1-icon" data-row="c"></span>
+        <span class="q1-icon" data-row="d"></span>
+        <span class="q1-icon" data-row="e"></span>
+        <span class="q1-icon" data-row="f"></span>
+        <span class="q1-icon" data-row="g"></span>
+      </div>
       <table class="q1-table">
         <thead><tr><th>רעיון</th><th>מדעי</th><th>לא מדעי</th></tr></thead>
         <tbody>
-          <tr><td>א. נורה שמתחממת יתר על המידה</td>
+          <tr data-row="a"><td>א. נורה שמתחממת יתר על המידה</td>
             <td><button class="q1-toggle" data-row="a" data-val="sci" onclick="q1Toggle('a','sci')" aria-pressed="false" aria-label="מדעי"></button></td>
             <td><button class="q1-toggle" data-row="a" data-val="not" onclick="q1Toggle('a','not')" aria-pressed="false" aria-label="לא מדעי"></button></td></tr>
-          <tr><td>ב. חיבור רופף של חוטי החשמל</td>
+          <tr data-row="b"><td>ב. חיבור רופף של חוטי החשמל</td>
             <td><button class="q1-toggle" data-row="b" data-val="sci" onclick="q1Toggle('b','sci')" aria-pressed="false" aria-label="מדעי"></button></td>
             <td><button class="q1-toggle" data-row="b" data-val="not" onclick="q1Toggle('b','not')" aria-pressed="false" aria-label="לא מדעי"></button></td></tr>
-          <tr><td>ג. חייזרים ששולחים סימנים</td>
+          <tr data-row="c"><td>ג. חייזרים ששולחים סימנים</td>
             <td><button class="q1-toggle" data-row="c" data-val="sci" onclick="q1Toggle('c','sci')" aria-pressed="false" aria-label="מדעי"></button></td>
             <td><button class="q1-toggle" data-row="c" data-val="not" onclick="q1Toggle('c','not')" aria-pressed="false" aria-label="לא מדעי"></button></td></tr>
-          <tr><td>ד. סערת ברקים שמשפיעה על רשת החשמל</td>
+          <tr data-row="d"><td>ד. סערת ברקים שמשפיעה על רשת החשמל</td>
             <td><button class="q1-toggle" data-row="d" data-val="sci" onclick="q1Toggle('d','sci')" aria-pressed="false" aria-label="מדעי"></button></td>
             <td><button class="q1-toggle" data-row="d" data-val="not" onclick="q1Toggle('d','not')" aria-pressed="false" aria-label="לא מדעי"></button></td></tr>
-          <tr><td>ה. מגנט חזק שהוצב במרכז השכונה</td>
+          <tr data-row="e"><td>ה. מגנט חזק שהוצב במרכז השכונה</td>
             <td><button class="q1-toggle" data-row="e" data-val="sci" onclick="q1Toggle('e','sci')" aria-pressed="false" aria-label="מדעי"></button></td>
             <td><button class="q1-toggle" data-row="e" data-val="not" onclick="q1Toggle('e','not')" aria-pressed="false" aria-label="לא מדעי"></button></td></tr>
-          <tr><td>ו. רוח רפאים חשמלית שמסתובבת בשכונה ומשחקת עם מפסקים</td>
+          <tr data-row="f"><td>ו. רוח רפאים חשמלית שמסתובבת בשכונה ומשחקת עם מפסקים</td>
             <td><button class="q1-toggle" data-row="f" data-val="sci" onclick="q1Toggle('f','sci')" aria-pressed="false" aria-label="מדעי"></button></td>
             <td><button class="q1-toggle" data-row="f" data-val="not" onclick="q1Toggle('f','not')" aria-pressed="false" aria-label="לא מדעי"></button></td></tr>
-          <tr><td>ז. חשמל סטטי שיוצר ניצוצות</td>
+          <tr data-row="g"><td>ז. חשמל סטטי שיוצר ניצוצות</td>
             <td><button class="q1-toggle" data-row="g" data-val="sci" onclick="q1Toggle('g','sci')" aria-pressed="false" aria-label="מדעי"></button></td>
             <td><button class="q1-toggle" data-row="g" data-val="not" onclick="q1Toggle('g','not')" aria-pressed="false" aria-label="לא מדעי"></button></td></tr>
         </tbody>
@@ -261,8 +271,8 @@
   <img loading="lazy" class="textbox1-corner-el" id="textbox-corner-s8" src="assets/images/textbox1-corner.png" alt="">
   <div class="textbox1-wrap" id="textbox-s8">
     <div class="textbox1-content" id="textbox-content-s8">
-      <p>רונית המורה מחלקת את הכיתה לשלוש קבוצות חקר. כל קבוצה תאסוף ראיות (נתונים) על אחת ההשערות:</p>
-      <p>קבוצה א' – ברקים.<br>קבוצה ב' – התחממות הנורות.<br>קבוצה ג' – חיבור רופף בארון החשמל.</p>
+      <p>רונית המורה מחלקת את הכיתה לשלוש קבוצות חקר.<br>כל קבוצה תאסוף ראיות (נתונים) על אחת ההשערות:</p>
+      <p>קבוצה א' – ייתכן והברקים גרמו לאורות להבהב.<br>קבוצה ב' – ייתכן שהתחממות יתר של הנורות גורמת לנורות להבהב.<br>קבוצה ג' – ייתכן שחיבור רופף של חוטי חשמל גורם לאורות להבהב.</p>
     </div>
   </div>
   <button class="nav-btn nav-prev" onclick="goBack()" aria-label="חזרה"></button>
@@ -341,22 +351,24 @@
   <button class="nav-btn nav-next hidden" onclick="advanceScreen()" aria-label="המשך"></button>
 </section>
 
-<!-- ================= SCREEN 12 — ישומון: סימולציית נורה מתחממת (שקף 23) ================= -->
+<!-- ================= SCREEN 12 — ישומון: התנסות בנורה מתחממת (שקף 23) ================= -->
 <section class="screen" data-screen="12" tabindex="-1">
   <img loading="lazy" class="screen-bg" src="assets/images/Background9.jpeg" alt="">
   <img loading="lazy" class="textbox1-right-bg" src="assets/images/textbox1-right.png" alt="">
+  <button class="s12-audio-btn" id="s12-audio-btn" onclick="s12ToggleAudio()" aria-label="השמעת ההסבר של המורה"><span class="s12-audio-btn-icon">🔊</span></button>
+  <audio id="s12-teacher-audio" src="assets/audio/teacher1.m4a" preload="none"></audio>
   <div class="sim-instructions">
-    <strong>הפעילו את הסימולציה:</strong>
+    <strong>הפעילו את ההתנסות:</strong>
     <ol>
       <li>עקבו אחרי מצב הנורה: האם היא דולקת או כבויה?</li>
       <li>שימו לב: מה קורה לטמפרטורה של הנורה?</li>
       <li>המשיכו לעקוב אחר השתנות הטמפרטורה עד שהנורה נכבית.</li>
       <li>לאחר שהנורה נכבית, המשיכו לעקוב אחר שינויי הטמפרטורה.</li>
       <li>עקבו אחר מצב הנורה: האם היא דולקת או כבויה?</li>
-      <li>הפעילו מחדש את הסימולציה כדי לראות שוב את התהליך.</li>
+      <li>הפעילו מחדש את ההתנסות כדי לראות שוב את התהליך.</li>
     </ol>
   </div>
-  <iframe class="sim-tablet-app" src="assets/app/LIGHT_BOLB.html" title="סימולציית נורה מתחממת"></iframe>
+  <iframe class="sim-tablet-app" src="assets/app/LIGHT_BOLB.html" title="התנסות בנורה מתחממת"></iframe>
   <button class="nav-btn nav-prev" onclick="goBack()" aria-label="חזרה"></button>
   <button class="nav-btn nav-next hidden" onclick="advanceScreen()" aria-label="המשך"></button>
 </section>
@@ -366,13 +378,13 @@
   <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">התנסות</span></button>
   <div class="q-content">
     <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.א</h2>
-        <div class="q-body">מה קורה לטמפרטורת הנורה לאחר הפעלת הסימולציה?<br><strong>סמנו את התשובה הנכונה.</strong></div>
+        <div class="q-body"><strong>מה קורה לטמפרטורת הנורה לאחר הפעלת הסימולציה?</strong><br>סמנו את התשובה הנכונה.</div>
         <div class="q-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-id="1" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(13,'1')"><span class="q-radio"></span>הטמפרטורה עולה בהדרגה.</div>
           <div class="q-opt" data-id="2" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(13,'2')"><span class="q-radio"></span>הטמפרטורה נשארת קבועה.</div>
@@ -403,13 +415,13 @@
   <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">התנסות</span></button>
   <div class="q-content">
     <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.ב</h2>
-        <div class="q-body">מתי הנורה נכבית?<br><strong>סמנו את התשובה הנכונה.</strong></div>
+        <div class="q-body"><strong>מתי הנורה נכבית?</strong><br>סמנו את התשובה הנכונה.</div>
         <div class="q-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-id="1" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(14,'1')"><span class="q-radio"></span>כאשר עוברות 20 שניות מתחילת הפעלת הסימולציה.</div>
           <div class="q-opt" data-id="2" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(14,'2')"><span class="q-radio"></span>כאשר הטמפרטורה יורדת מתחת ל-120 מעלות צלסיוס.</div>
@@ -440,13 +452,13 @@
   <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">התנסות</span></button>
   <div class="q-content">
     <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.ג</h2>
-        <div class="q-body">מה גורם לנורה להידלק שוב בסימולציה?<br><strong>סמנו את התשובה הנכונה.</strong></div>
+        <div class="q-body"><strong>מה גורם לנורה להידלק שוב בסימולציה?</strong><br>סמנו את התשובה הנכונה.</div>
         <div class="q-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-id="1" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(15,'1')"><span class="q-radio"></span>התקררות הנורה עד לטמפרטורה של 25 מעלות צלסיוס.</div>
           <div class="q-opt" data-id="2" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(15,'2')"><span class="q-radio"></span>הזמן שעובר מהרגע שהנורה נכבית.</div>
@@ -477,13 +489,13 @@
   <img loading="lazy" class="q-bg-img" src="assets/images/Background_Q.jpeg" alt="">
 
   <div class="q-bg-overlay"></div>
-  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">סימולציה</span></button>
+  <button class="sim-reopen-btn" onclick="toggleSimPopup(this,12)"><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-normal" src="assets/images/btn-help-open-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-open-hover" src="assets/images/btn-help-open-hover.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-normal" src="assets/images/btn-help-close-normal.png" alt=""><img loading="lazy" class="sim-reopen-btn-icon sim-reopen-btn-icon-close-hover" src="assets/images/btn-help-close-hover.png" alt=""><span class="sim-reopen-btn-label">התנסות</span></button>
   <div class="q-content">
     <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 3.ד</h2>
-        <div class="q-body">מה ניתן להסיק מהסימולציה לגבי הבהוב האורות ביישוב?<br><strong>סמנו את ההמשך הנכון של המשפט: הבהוב האורות ביישוב נגרם בגלל...</strong></div>
+        <div class="q-body"><strong>מה ניתן להסיק מהסימולציה לגבי הבהוב האורות ביישוב?</strong><br>סמנו את ההמשך הנכון של המשפט: הבהוב האורות ביישוב נגרם בגלל...</div>
         <div class="q-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-id="1" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(16,'1')"><span class="q-radio"></span>חיבור רופף של הנורות במעגל החשמלי.</div>
           <div class="q-opt" data-id="2" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(16,'2')"><span class="q-radio"></span>התחממות יתר של הנורה.</div>
@@ -567,7 +579,7 @@
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 4.א</h2>
-        <div class="q-body">כיצד ניתן לזהות חיבור רופף בלוח החשמל בסימולציה?<br><strong>סמנו את <span class="q-highlight">כל</span> התשובות הנכונות.</strong></div>
+        <div class="q-body"><strong>כיצד ניתן לזהות חיבור רופף בלוח החשמל בסימולציה?</strong><br>סמנו את <strong><span class="q-highlight">כל</span></strong> התשובות הנכונות.</div>
         <div class="q-answers" role="group" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-multi data-id="1" role="checkbox" tabindex="0" aria-checked="false" onclick="qSelect(19,'1')"><span class="q-radio"></span>הנורה דולקת בעוצמה מלאה ללא שינוי.</div>
           <div class="q-opt" data-multi data-id="2" role="checkbox" tabindex="0" aria-checked="false" onclick="qSelect(19,'2')"><span class="q-radio"></span>הנורה מהבהבת או נחלשת לסירוגין (הפסקות חוזרות).</div>
@@ -605,7 +617,7 @@
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 4.ב</h2>
-        <div class="q-body">מהו הקשר בין חיבור רופף להבהוב הנורות?<br><strong>סמנו את ההמשך הנכון של המשפט: הנורה מהבהבת, כי חיבור רופף גורם...</strong></div>
+        <div class="q-body"><strong>מהו הקשר בין חיבור רופף להבהוב הנורות?</strong><br>סמנו את ההמשך הנכון של המשפט: הנורה מהבהבת,<br>כי חיבור רופף גורם...</div>
         <div class="q-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-id="1" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(20,'1')"><span class="q-radio"></span>לזרם החשמל להיעצר ולהתחדש במהירות.</div>
           <div class="q-opt" data-id="2" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(20,'2')"><span class="q-radio"></span>להגדלת העוצמה של הזרם החשמלי.</div>
@@ -645,12 +657,12 @@
   <div class="rtg-flip-row">
     <div class="rtg-flipcard" data-tile-id="groupA" tabindex="0" role="button"
       aria-label="קבוצה א' — לחצו לצפייה בממצאים" onclick="rtgClick(21,this,'card-flip')">
-      <div class="rtg-flipcard-face rtg-flipcard-front card-a-crop">
+      <div class="rtg-flipcard-face rtg-flipcard-front card-c-crop">
         <div class="rtg-flipcard-title">קבוצה א'</div>
         <div class="rtg-flipcard-label">השערה</div>
         <div class="rtg-flipcard-text">ברקים גרמו להבהוב.</div>
       </div>
-      <div class="rtg-flipcard-face rtg-flipcard-back card-a-crop">
+      <div class="rtg-flipcard-face rtg-flipcard-back card-c-crop">
         <div class="rtg-flipcard-label">מה גילינו?</div>
         <div class="rtg-flipcard-text">לא הייתה סערה.</div>
         <div class="rtg-flipcard-label">מסקנה:</div>
@@ -673,12 +685,12 @@
     </div>
     <div class="rtg-flipcard" data-tile-id="groupC" tabindex="0" role="button"
       aria-label="קבוצה ג' — לחצו לצפייה בממצאים" onclick="rtgClick(21,this,'card-flip')">
-      <div class="rtg-flipcard-face rtg-flipcard-front card-c-crop">
+      <div class="rtg-flipcard-face rtg-flipcard-front card-a-crop">
         <div class="rtg-flipcard-title">קבוצה ג'</div>
         <div class="rtg-flipcard-label">השערה</div>
         <div class="rtg-flipcard-text">חיבור רופף בארון החשמל גרם להבהוב.</div>
       </div>
-      <div class="rtg-flipcard-face rtg-flipcard-back card-c-crop">
+      <div class="rtg-flipcard-face rtg-flipcard-back card-a-crop">
         <div class="rtg-flipcard-label">מה גילינו?</div>
         <div class="rtg-flipcard-text">נמצאו חיבורים רופפים בארון החשמל. חיבור רופף גורם לזרם להיעצר ולהתחדש ולנורות להבהב.</div>
         <div class="rtg-flipcard-label">מסקנה:</div>
@@ -704,7 +716,7 @@
       </div>
       <div class="qt-question-col">
         <h2 class="q-title">שאלה 5</h2>
-        <div class="q-body">כיצד חיבור חשמלי רופף יכול להשפיע על תושבי השכונה?<br><strong>סמנו את <span class="q-highlight">כל</span> התשובות הנכונות.</strong></div>
+        <div class="q-body"><strong>כיצד חיבור חשמלי רופף יכול להשפיע על תושבי השכונה?</strong><br>סמנו את <strong><span class="q-highlight">כל</span></strong> התשובות הנכונות.</div>
         <div class="q-answers" role="group" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-multi data-id="1" role="checkbox" tabindex="0" aria-checked="false" onclick="qSelect(22,'1')"><span class="q-radio"></span>תושבים יסבלו מהפסקות חשמל חוזרות וגם מכשירי חשמל יכולים להיפגע.</div>
           <div class="q-opt" data-multi data-id="2" role="checkbox" tabindex="0" aria-checked="false" onclick="qSelect(22,'2')"><span class="q-radio"></span>בגלל הפסקות החשמל, השכונה תצרוך פחות חשמל, ולכן מדובר בתופעה חיובית.</div>
@@ -730,11 +742,11 @@
     <div class="qt-row">
       <div class="qt-teacher-col">
         <div class="qt-bubble"><img loading="lazy" class="qt-bubble-img" src="assets/images/bubble-talk.png" alt=""><span class="qt-bubble-text">כאשר מגלים בעזרת ראיות מדעיות שקיימת תקלה מסוכנת, חשוב לדעת איך לפעול באחריות.</span></div>
-        <img loading="lazy" class="qt-teacher-img" src="assets/images/teacher_small.png" alt="">
+        <img loading="lazy" class="qt-teacher-img" src="assets/images/teacher_small-2.png" alt="">
       </div>
       <div class="qt-question-col">
         <h2 class="q-title">שאלה 6</h2>
-        <div class="q-body">מהי הפעולה הנכונה והאחראית ביותר שעל תושבי השכונה לבצע כדי לטפל בחיבור הרופף בארון החשמל?<br><strong>סמנו את התשובה הנכונה.</strong></div>
+        <div class="q-body"><strong>מהי הפעולה הנכונה והאחראית ביותר שעל תושבי השכונה לבצע כדי לטפל בחיבור הרופף בארון החשמל?</strong><br>סמנו את התשובה הנכונה.</div>
         <div class="q-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-id="1" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(23,'1')"><span class="q-radio"></span>להתעלם מהעניין, האורות ממילא נדלקים בסוף וההבהוב דווקא יפה בלילה.</div>
           <div class="q-opt" data-id="2" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(23,'2')"><span class="q-radio"></span>לדווח מיד למוקד העירוני ולחברת החשמל ולדרוש תיקון דחוף של החיבור הרופף, כדי למנוע סכנה בטיחותית וסביבתית לתושבים.</div>
@@ -795,7 +807,7 @@
     <div class="s12-row">
       <div class="s12-right">
         <h2 class="q-title">שאלה 7</h2>
-        <div class="q-body">חשבו על הדרך שבה פתרנו את התעלומה, ו<strong>סמנו את <span class="q-highlight">כל</span> המשפטים המתארים נכון את החקר המדעי.</strong></div>
+        <div class="q-body"><strong>חשבו על הדרך שבה פתרנו את התעלומה</strong>, וסמנו את <strong><span class="q-highlight">כל</span></strong> המשפטים המתארים נכון את החקר המדעי.</div>
         <div class="q-answers" role="group" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-multi data-id="1" role="checkbox" tabindex="0" aria-checked="false" onclick="qSelect(26,'1')"><span class="q-radio"></span>המדע מתבסס על דברים שאפשר לבדוק באופן ממשי.</div>
           <div class="q-opt" data-multi data-id="2" role="checkbox" tabindex="0" aria-checked="false" onclick="qSelect(26,'2')"><span class="q-radio"></span>גם רעיונות שלא ניתנים לבדיקה חשובים וצריך להתבסס עליהם.</div>
@@ -825,7 +837,7 @@
   <div class="q-content">
     <img loading="lazy" class="q-bg-panel" src="assets/images/textbox2.png" alt="">
     <h2 class="q-title">שאלה 8</h2>
-    <div class="q-body">כדי להבין מה גרם לתופעת הבהובי האורות בשכונה, פעלנו לפי תהליך מדעי מסודר. לפניכם שלבי התהליך, אך הם התערבבו. גררו את מספרי השלבים אל התאים הריקים שלצד כל שלב, כך שיתארו את סדר התהליך.</div>
+    <div class="q-body">כדי להבין מה גרם לתופעת הבהובי האורות בשכונה, פעלנו לפי תהליך מדעי מסודר.<br>לפניכם שלבי התהליך, אך הם התערבבו. גררו את מספרי השלבים אל התאים הריקים שלצד כל שלב, כך שיתארו את סדר התהליך.</div>
     <div class="ddq-wrap">
       <div class="ddq-source" id="ddq-source">
         <div class="ddq-source-slot"><div class="ddq-drag-card" id="drag-1" draggable="true" role="button" tabindex="0" aria-label="שלב 1, הקישו Enter לבחירה ולאחר מכן על התא הריק המתאים" ondragstart="ddqDragStart(event,'drag-1')" ondragend="ddqDragEnd()">1</div></div>
@@ -835,32 +847,32 @@
         <div class="ddq-source-slot"><div class="ddq-drag-card" id="drag-5" draggable="true" role="button" tabindex="0" aria-label="שלב 5, הקישו Enter לבחירה ולאחר מכן על התא הריק המתאים" ondragstart="ddqDragStart(event,'drag-5')" ondragend="ddqDragEnd()">5</div></div>
         <div class="ddq-source-slot"><div class="ddq-drag-card" id="drag-6" draggable="true" role="button" tabindex="0" aria-label="שלב 6, הקישו Enter לבחירה ולאחר מכן על התא הריק המתאים" ondragstart="ddqDragStart(event,'drag-6')" ondragend="ddqDragEnd()">6</div></div>
       </div>
-      <div class="ddq-steps-table">
+      <div class="ddq-steps-table" ondragover="ddqTableDragOver(event)" ondragleave="ddqTableDragLeave(event)" ondrop="ddqTableDrop(event)">
         <div class="ddq-steps-head">
           <div class="ddq-head-text">תיאור שלב</div>
         </div>
         <div class="ddq-step-row">
-          <div class="ddq-target" id="target-row1" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר" ondragover="ddqDragOver(event,'target-row1')" ondragleave="ddqDragLeave(event,'target-row1')" ondrop="ddqDrop(event,'target-row1')"></div>
+          <div class="ddq-target" id="target-row1" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר"></div>
           <div class="ddq-step-text">מבצעים בדיקה מדעית (תצפית/ניסוי/מדידה/סימולציה) להשערות שניתן לבדוק.</div>
         </div>
         <div class="ddq-step-row">
-          <div class="ddq-target" id="target-row2" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר" ondragover="ddqDragOver(event,'target-row2')" ondragleave="ddqDragLeave(event,'target-row2')" ondrop="ddqDrop(event,'target-row2')"></div>
+          <div class="ddq-target" id="target-row2" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר"></div>
           <div class="ddq-step-text">בודקים אילו השערות ניתנות לבדיקה ואילו לא.</div>
         </div>
         <div class="ddq-step-row">
-          <div class="ddq-target" id="target-row3" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר" ondragover="ddqDragOver(event,'target-row3')" ondragleave="ddqDragLeave(event,'target-row3')" ondrop="ddqDrop(event,'target-row3')"></div>
+          <div class="ddq-target" id="target-row3" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר"></div>
           <div class="ddq-step-text">בוחנים את ההשערות שניתן לבדוק באמצעות כלים מדעיים.</div>
         </div>
         <div class="ddq-step-row">
-          <div class="ddq-target" id="target-row4" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר" ondragover="ddqDragOver(event,'target-row4')" ondragleave="ddqDragLeave(event,'target-row4')" ondrop="ddqDrop(event,'target-row4')"></div>
+          <div class="ddq-target" id="target-row4" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר"></div>
           <div class="ddq-step-text">מעלים השערות שונות להסבר התופעה.</div>
         </div>
         <div class="ddq-step-row">
-          <div class="ddq-target" id="target-row5" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר" ondragover="ddqDragOver(event,'target-row5')" ondragleave="ddqDragLeave(event,'target-row5')" ondrop="ddqDrop(event,'target-row5')"></div>
+          <div class="ddq-target" id="target-row5" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר"></div>
           <div class="ddq-step-text">בוחרים את ההשערות המתאימות: אלו שעברו את הבדיקה המדעית או נתמכו על ידי הממצאים.</div>
         </div>
         <div class="ddq-step-row">
-          <div class="ddq-target" id="target-row6" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר" ondragover="ddqDragOver(event,'target-row6')" ondragleave="ddqDragLeave(event,'target-row6')" ondrop="ddqDrop(event,'target-row6')"></div>
+          <div class="ddq-target" id="target-row6" role="button" tabindex="0" aria-label="תא ריק, הקישו Enter להצבת השלב שנבחר"></div>
           <div class="ddq-step-text">מסננים השערות שלא ניתן לבדוק בעזרת כלים מדעיים.</div>
         </div>
       </div>
@@ -885,7 +897,7 @@
       </div>
       <div class="qt-question-col">
         <h2 class="q-title">שאלה 9</h2>
-        <div class="q-body">מדוע חשוב לבחון השערות בעזרת ידע מדעי ולהבין את השפעתן על אנשים ועל הסביבה?<br><strong>סמנו את התשובה הנכונה.</strong></div>
+        <div class="q-body"><strong>מדוע חשוב לבחון השערות בעזרת ידע מדעי ולהבין את השפעתן על אנשים ועל הסביבה?</strong><br>סמנו את התשובה הנכונה.</div>
         <div class="q-answers" role="radiogroup" aria-label="אפשרויות תשובה">
           <div class="q-opt" data-id="1" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(28,'1')"><span class="q-radio"></span>משום שזה עוזר לנו לבחור בקלות את הפתרון בלי צורך לבדוק מידע נוסף.</div>
           <div class="q-opt" data-id="2" role="radio" tabindex="0" aria-checked="false" onclick="qSelect(28,'2')"><span class="q-radio"></span>משום שזה מבטיח שכל פתרון שנבחר יהיה מושלם ולא יגרום לשום בעיה בעתיד.</div>

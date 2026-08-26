@@ -94,7 +94,32 @@ function focusScreen(n) {
 
 function pauseAllVideos() {
   document.querySelectorAll('video').forEach(function (v) { try { v.pause(); } catch (e) {} });
+  document.querySelectorAll('audio').forEach(function (a) { try { a.pause(); } catch (e) {} });
 }
+
+/* Screen 12's teacher narration (teacher1.m4a) — plain play/pause toggle,
+   no autoplay (autoplay-with-sound is unreliable across browsers and is
+   avoided everywhere else in this lomda too). Icon swaps 🔊/⏸ to reflect
+   state; resets to 🔊 whenever pauseAllVideos() stops it from elsewhere
+   (leaving the screen, opening an overlay that calls it, etc.). */
+function s12ToggleAudio() {
+  const audio = document.getElementById('s12-teacher-audio');
+  const btn = document.getElementById('s12-audio-btn');
+  const icon = btn && btn.querySelector('.s12-audio-btn-icon');
+  if (!audio || !icon) return;
+  if (audio.paused) {
+    audio.play().catch(function () {});
+    icon.textContent = '⏸';
+  } else {
+    audio.pause();
+    icon.textContent = '🔊';
+  }
+}
+(function () {
+  const audio = document.getElementById('s12-teacher-audio');
+  const icon = document.querySelector('#s12-audio-btn .s12-audio-btn-icon');
+  if (audio && icon) audio.addEventListener('pause', function () { icon.textContent = '🔊'; });
+})();
 
 /* A display:none .screen's own <img loading="lazy"> elements only start
    fetching the instant that screen becomes active — correct for avoiding
@@ -780,11 +805,14 @@ function qIsCorrect(n) {
   return true;
 }
 
-// Multi-choice partial credit check: did the learner pick at least one of
-// the correct answers (even though not all of them)? Used to distinguish
-// "זו תשובה חלקית" from a fully-wrong final attempt (no correct answers
-// picked at all) — only meaningful where the config defines a `partial`
-// feedback entry (see qCheck).
+// Multi-choice partial credit check for the FINAL attempt: did the learner
+// pick at least one correct answer (even if also mixed with a wrong one)?
+// This is deliberately broader than qIsCleanPartialSelection below (which
+// is only for the FIRST attempt's retry wording) — on the final attempt,
+// "some correct, possibly plus a wrong pick" still counts as partial;
+// only a final pick with ZERO correct answers is scored fully wrong
+// (wrong2). Only meaningful where the config defines a `partial` feedback
+// entry (see qCheck).
 function qHasAnyCorrectSelected(n) {
   const cfg = QCONFIG[n];
   const st = qState[n];
@@ -792,6 +820,21 @@ function qHasAnyCorrectSelected(n) {
   for (const v of st.selected) if (cfg.correctSet.indexOf(v) !== -1) return true;
   return false;
 }
+
+// First-attempt retry wording only (see qCheck's non-final branch): is the
+// learner's pick a clean (non-empty) SUBSET of the correct answers — some
+// but not all of them, and nothing wrong mixed in? Distinct from
+// qHasAnyCorrectSelected above, which is used for the final attempt's
+// broader partial-vs-wrong scoring.
+function qIsCleanPartialSelection(n) {
+  const cfg = QCONFIG[n];
+  const st = qState[n];
+  if (cfg.kind !== 'multi') return false;
+  if (st.selected.size === 0 || st.selected.size >= cfg.correctSet.length) return false;
+  for (const v of st.selected) if (cfg.correctSet.indexOf(v) === -1) return false;
+  return true;
+}
+
 
 function qMarkOptions(n, finalReveal) {
   const cfg = QCONFIG[n];
@@ -846,7 +889,9 @@ function qCheck(n) {
     recordScore(cfg.key, 0);
     // Partial credit wording: only kicks in where the config actually
     // defines a `partial` feedback entry, and only when the learner's final
-    // pick included at least one correct answer (not zero).
+    // pick included at least one correct answer (not zero) — a wrong pick
+    // mixed in doesn't disqualify it here (contrast with the first-attempt
+    // retry wording below, which IS strict about that).
     st.scoredPartial = !!cfg.feedback.partial && qHasAnyCorrectSelected(n);
     const outcome = st.scoredPartial ? 'partial' : 'wrong2';
     showFeedback(outcome, cfg.feedback[outcome]);
@@ -861,8 +906,15 @@ function qCheck(n) {
   // reveal (qMarkOptions(n, true) above). The check button is hidden
   // entirely (not just disabled), same as every other outcome, and only
   // reappears once the learner picks something for the retry (see qSelect).
+  // A clean partial pick (only some correct answers, nothing wrong) gets
+  // its own retryPartial wording where the config defines one — same
+  // "try again" instructions, just acknowledging what was picked was on
+  // the right track instead of the plain "that's not the answer" text.
+  // Anything else (a wrong pick mixed with correct ones, or only wrong)
+  // falls back to the plain retry text.
   st.lastWrong = qSnapshot(st);
-  showFeedback('retry', cfg.feedback.retry);
+  const retryOutcome = (cfg.feedback.retryPartial && qIsCleanPartialSelection(n)) ? 'retryPartial' : 'retry';
+  showFeedback(retryOutcome, cfg.feedback[retryOutcome]);
   if (checkBtn) {
     checkBtn.disabled = true;
     checkBtn.style.display = 'none';
@@ -953,8 +1005,44 @@ function q1Render(finalReveal) {
         b.classList.add('wrong');
       }
     });
+    // Per-row check/X, independent of the overall-question finalReveal flag —
+    // always reflects whether THIS row's own pick was right, once answered.
+    const icon = document.querySelector('.q1-icon[data-row="' + r.id + '"]');
+    if (icon) {
+      icon.classList.remove('correct', 'wrong');
+      const ans = q1State.answers[r.id];
+      if (ans) icon.classList.add(ans === r.correct ? 'correct' : 'wrong');
+    }
+  });
+  q1PositionIcons();
+}
+
+/* Lines up each .q1-icon (living outside the <table> in .q1-icons-col)
+   with its row's vertical center. Uses each row's actual rendered rect
+   rather than a fixed per-row pixel offset because row f wraps to two
+   lines and is taller than the rest. getBoundingClientRect() returns
+   already-scaled viewport pixels (the whole #app is scaled via CSS
+   transform — see scaleApp()), so the raw pixel delta between the row and
+   the icon column is divided back down by that same scale factor before
+   being written into icon.style.top, which is itself in the transformed
+   (pre-scale) coordinate space. */
+function q1PositionIcons() {
+  const col = document.querySelector('[data-screen="6"] .q1-icons-col');
+  const table = document.querySelector('[data-screen="6"] .q1-table');
+  if (!col || !table) return;
+  const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080) || 1;
+  const colRect = col.getBoundingClientRect();
+  table.querySelectorAll('tbody tr[data-row]').forEach(function (tr) {
+    const icon = col.querySelector('.q1-icon[data-row="' + tr.getAttribute('data-row') + '"]');
+    if (!icon) return;
+    const trRect = tr.getBoundingClientRect();
+    const centerY = trRect.top + trRect.height / 2;
+    icon.style.top = ((centerY - colRect.top) / scale - icon.offsetHeight / 2) + 'px';
   });
 }
+window.addEventListener('resize', function () {
+  if (currentScreen === 6) q1PositionIcons();
+});
 
 /* Q1 is single-attempt — the very first check is final, correct or not,
    revealing the explanatory feedback either way. On a wrong outcome, only
@@ -1244,12 +1332,47 @@ function ddqDragEnd() {
   if (!ddqDropHandled) ddqRender();
   ddqDragActive = null;
 }
-function ddqDragOver(e, targetId) { e.preventDefault(); const t = document.getElementById(targetId); if (t) t.classList.add('drag-over'); }
-function ddqDragLeave(e, targetId) { const t = document.getElementById(targetId); if (t) t.classList.remove('drag-over'); }
-function ddqDrop(e, targetId) {
+/* Magnet drop: native HTML5 dragover/drop only ever fires on whatever
+   element is literally under the pointer, which is what made the small
+   56px target squares hard to hit. Rather than resize anything visible,
+   the whole .ddq-steps-table listens once and picks the row whose target
+   is VERTICALLY CLOSEST to the pointer (no horizontal component — this is
+   a single vertical column of rows, so Y-distance-to-row-center is exactly
+   "which row am I nearest"), regardless of whether the pointer is over the
+   little square, the step text, or the gap between rows. That row is
+   highlighted as the drop candidate and used on actual drop. */
+function ddqNearestTarget(e) {
+  const targets = document.querySelectorAll('[data-screen="27"] .ddq-target');
+  let best = null, bestDist = Infinity;
+  targets.forEach(function (t) {
+    const r = t.getBoundingClientRect();
+    const cy = r.top + r.height / 2;
+    const d = Math.abs(e.clientY - cy);
+    if (d < bestDist) { bestDist = d; best = t; }
+  });
+  return best;
+}
+function ddqTableDragOver(e) {
   e.preventDefault();
-  const t = document.getElementById(targetId);
-  if (t) t.classList.remove('drag-over');
+  const best = ddqNearestTarget(e);
+  document.querySelectorAll('[data-screen="27"] .ddq-target').forEach(function (t) {
+    t.classList.toggle('drag-over', t === best);
+  });
+}
+function ddqTableDragLeave(e) {
+  // Only clear once the pointer actually leaves the whole table (not just
+  // crossing from one row to the next inside it) — relatedTarget is null
+  // when leaving the browser/document entirely, which also counts.
+  const table = e.currentTarget;
+  if (e.relatedTarget && table.contains(e.relatedTarget)) return;
+  document.querySelectorAll('[data-screen="27"] .ddq-target').forEach(function (t) { t.classList.remove('drag-over'); });
+}
+function ddqTableDrop(e) {
+  e.preventDefault();
+  const best = ddqNearestTarget(e);
+  document.querySelectorAll('[data-screen="27"] .ddq-target').forEach(function (t) { t.classList.remove('drag-over'); });
+  if (!best) return;
+  const targetId = best.id;
   const dragId = ddqDragActive || e.dataTransfer.getData('text/plain');
   if (!dragId) return;
   ddqDropHandled = true;
@@ -1513,7 +1636,8 @@ qInitConfig(16, {
 qInitConfig(19, {
   kind: 'multi', key: 'q4a', weight: 5, correctSet: ['2', '4'],
   feedback: {
-    retry: { title: 'זו אינה התשובה,', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
+    retry: { title: 'זו אינה התשובה, נסו שוב.', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
+    retryPartial: { title: 'זו תשובה נכונה חלקית, מה הוא הסימן הנוסף?', body: ['הפעילו שוב את הסימולציה, התבוננו בתהליך ונסו שוב.'] },
     correct: { title: 'צדקת!', body: ['בסימולציה אפשר לזהות חיבור רופף לפי שני סימנים: הזרם החשמלי אינו רציף, והנורה מהבהבת או נחלשת לסירוגין.'] },
     partial: { title: 'זו תשובה חלקית', body: ['בסימולציה אפשר לזהות חיבור רופף לפי שני סימנים: הזרם החשמלי אינו רציף, והנורה מהבהבת או נחלשת לסירוגין.'] },
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['בסימולציה אפשר לזהות חיבור רופף לפי שני סימנים: הזרם החשמלי אינו רציף, והנורה מהבהבת או נחלשת לסירוגין.'] }
@@ -1531,6 +1655,7 @@ qInitConfig(22, {
   kind: 'multi', key: 'q5', weight: 10, correctSet: ['1', '3', '5'],
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
+    retryPartial: { title: 'זו תשובה נכונה חלקית, נסו שוב.', body: [] },
     correct: { title: 'צדקת!', body: ['חיבור חשמלי רופף הוא לא רק תקלה טכנית. הוא עלול להשפיע על בטיחות התושבים, על אספקת החשמל ועל איכות החיים בשכונה.'] },
     partial: { title: 'זו תשובה חלקית', body: ['חיבור חשמלי רופף הוא לא רק תקלה טכנית. הוא עלול להשפיע על בטיחות התושבים, על אספקת החשמל ועל איכות החיים בשכונה.'] },
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['חיבור חשמלי רופף הוא לא רק תקלה טכנית. הוא עלול להשפיע על בטיחות התושבים, על אספקת החשמל ועל איכות החיים בשכונה.'] }
@@ -1548,6 +1673,7 @@ qInitConfig(26, {
   kind: 'multi', key: 'q7', weight: 10, correctSet: ['1', '3'],
   feedback: {
     retry: { title: 'זו אינה התשובה, נסו שוב.', body: [] },
+    retryPartial: { title: 'זו תשובה נכונה חלקית, נסו שוב.', body: [] },
     correct: { title: 'צדקת!', body: ['חקר מדעי מתבסס על רעיונות שאפשר לבדוק באופן ממשי באמצעות תצפיות, ניסויים וכלים מדעיים.'] },
     partial: { title: 'זו תשובה חלקית', body: ['חקר מדעי מתבסס על רעיונות שאפשר לבדוק באופן ממשי באמצעות תצפיות, ניסויים וכלים מדעיים.'] },
     wrong2: { title: 'זו טעות, כל הכבוד על הניסיון.', body: ['חקר מדעי מתבסס על רעיונות שאפשר לבדוק באופן ממשי באמצעות תצפיות, ניסויים וכלים מדעיים.'] }

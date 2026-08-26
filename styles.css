@@ -242,6 +242,14 @@ html, body {
   background-size: cover;
   background-position: center;
 }
+.intro-logo {
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  width: 220px;
+  height: auto;
+  z-index: 2;
+}
 .intro-title-panel {
   position: absolute;
   top: 212px;
@@ -572,7 +580,7 @@ html, body {
    axes) to enlarge without distorting the line art. */
 .rtg-teacher-char {
   position: absolute;
-  top: 56px;
+  top: 4px;
   right: 60px;
   width: 218px;
   height: 210px;
@@ -586,10 +594,10 @@ html, body {
    used at its own natural size, no further crop/scale math needed. */
 .rtg-bubble2 {
   position: absolute;
-  top: -10px;
+  top: -7px;
   right: 244px;
-  width: 800px;
-  height: 262px;
+  width: 996px;
+  height: 222px;
   background-image: url('assets/images/bubble-talk_2.png');
   background-repeat: no-repeat;
   background-size: 104% 104%;
@@ -635,8 +643,8 @@ html, body {
 }
 .rtg-tile-round {
   position: absolute;
-  width: 116px;
-  height: 116px;
+  width: 118px;
+  height: 124px;
   border-radius: 50%;
   border: 4px solid transparent;
   background: transparent;
@@ -662,13 +670,13 @@ html, body {
   background: rgba(97, 97, 97, 0.8);
   z-index: 1;
 }
-.rtg-tile-round:nth-child(1) { left: 1574px; top: 256px; }
-.rtg-tile-round:nth-child(2) { left: 1434px; top: 301px; }
-.rtg-tile-round:nth-child(3) { left: 1574px; top: 381px; }
-.rtg-tile-round:nth-child(4) { left: 1435px; top: 426px; }
-.rtg-tile-round:nth-child(5) { left: 1574px; top: 515px; }
-.rtg-tile-round:nth-child(6) { left: 1434px; top: 566px; }
-.rtg-tile-round:nth-child(7) { left: 1574px; top: 644px; }
+.rtg-tile-round:nth-child(1) { left: 1602px; top: 222px; }
+.rtg-tile-round:nth-child(2) { left: 1449px; top: 271px; }
+.rtg-tile-round:nth-child(3) { left: 1600px; top: 359px; }
+.rtg-tile-round:nth-child(4) { left: 1449px; top: 408px; }
+.rtg-tile-round:nth-child(5) { left: 1602px; top: 506px; }
+.rtg-tile-round:nth-child(6) { left: 1449px; top: 561px; }
+.rtg-tile-round:nth-child(7) { left: 1601px; top: 646px; }
 .rtg-tile-round .rtg-check {
   position: absolute;
   top: -8px;
@@ -765,9 +773,9 @@ html, body {
 .rtg-flipcard-label { font-size: 34px; font-weight: 600; margin-top: 215px; }
 .rtg-flipcard-back .rtg-flipcard-label { font-weight: 800; color: #0B0D5E; }
 .q-highlight { color: #0B0D5E; }
-.rtg-flipcard-text { font-size: 34px; font-weight: 600; color: #222; line-height: 1.4; width: 250px; }
+.rtg-flipcard-text { font-size: 34px; font-weight: 600; color: #222; line-height: 1.45; width: 250px; }
 .rtg-flipcard-back .rtg-flipcard-label:nth-child(1) { margin-top: -100px; }
-.rtg-flipcard-back .rtg-flipcard-label:nth-child(3) { margin-top: 25px; }
+.rtg-flipcard-back .rtg-flipcard-label:nth-child(3) { margin-top: 12px; }
 .rtg-flipcard.flipped .rtg-flipcard-label,
 .rtg-flipcard.flipped .rtg-flipcard-text { font-size: 27px; }
 
@@ -1215,6 +1223,7 @@ html, body {
   width: 139%;
   /* margin-bottom: 39px; */
 }
+[data-screen="23"] .qt-teacher-img { margin-right: -30px; }
 
 .img-zoom-btn {
   position: absolute;
@@ -1265,7 +1274,7 @@ html, body {
 .fb-title-row { display: flex; align-items: center; justify-content: flex-start; gap: 10px; margin: 0 0 10px; }
 .fb-title { font-size: 34px; font-weight: 700; margin: 0; color: #fcfafa; text-align: right; line-height: 1.5; }
 #feedback-popup.correct .fb-title { color: #44A84B; }
-#feedback-popup.retry .fb-title, #feedback-popup.wrong2 .fb-title, #feedback-popup.partial .fb-title { color: #B67BE0; }
+#feedback-popup.retry .fb-title, #feedback-popup.retryPartial .fb-title, #feedback-popup.wrong2 .fb-title, #feedback-popup.partial .fb-title { color: #B67BE0; }
 /* correct.png is already a tight icon; mistake.png is a full 1920x1080
    canvas with the icon art in one corner, cropped via background-position
    rather than stretched. */
@@ -1421,6 +1430,30 @@ html, body {
   color: #111;
 }
 [data-screen="12"] .sim-instructions ol { font-size: 34px; }
+/* Toggles s12-teacher-audio (teacher1.m4a) — plain speaker glyph like the
+   video screens' .vc-btn[data-mute], swapped to ⏸ while playing (see
+   s12ToggleAudio() in script.js). The glyph is a full-color emoji, which
+   `color` can't touch — brightness(0) invert(1) crushes it to a pure white
+   silhouette. Applied to the icon span only (not the button itself), so
+   the navy background isn't inverted along with it. */
+.s12-audio-btn {
+  position: absolute;
+  top: 10px;
+  right: 330px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: #1b2a4d;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 8;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.s12-audio-btn:hover { background: #24365f; }
+.s12-audio-btn-icon { filter: brightness(0) invert(1); }
+.s12-audio-btn:hover { background: #24365f; }
 .sim-tablet-app {
   position: absolute;
   left: 170px;
@@ -1478,6 +1511,35 @@ html, body {
   user-select: none;
 }
 .sim-reopen-btn.is-open .sim-reopen-btn-label { display: none; }
+
+/* Screen 10's "תזכורת" button is a bigger, more prominent variant of the
+   same reopen-button component — sized up (not just the icon but its
+   label too) so it reads clearly against the busy background there. A
+   gentle pulse (not the nav-arrow's blinkArrow) draws the eye to it
+   without being distracting; paused while the popup it opens is showing,
+   same guard as the nav-btn blink under reduced motion. */
+[data-screen="10"] .sim-reopen-btn,
+[data-screen="13"] .sim-reopen-btn,
+[data-screen="14"] .sim-reopen-btn,
+[data-screen="15"] .sim-reopen-btn,
+[data-screen="16"] .sim-reopen-btn,
+[data-screen="19"] .sim-reopen-btn,
+[data-screen="20"] .sim-reopen-btn { top: -17px; left: -17px; width: 160px; height: 160px; animation: simReopenPulse 1.8s ease-in-out infinite; }
+[data-screen="10"] .sim-reopen-btn-label,
+[data-screen="13"] .sim-reopen-btn-label,
+[data-screen="14"] .sim-reopen-btn-label,
+[data-screen="15"] .sim-reopen-btn-label,
+[data-screen="16"] .sim-reopen-btn-label,
+[data-screen="19"] .sim-reopen-btn-label,
+[data-screen="20"] .sim-reopen-btn-label { width: 160px; font-size: 26px; }
+[data-screen="10"] .sim-reopen-btn.is-open,
+[data-screen="13"] .sim-reopen-btn.is-open,
+[data-screen="14"] .sim-reopen-btn.is-open,
+[data-screen="15"] .sim-reopen-btn.is-open,
+[data-screen="16"] .sim-reopen-btn.is-open,
+[data-screen="19"] .sim-reopen-btn.is-open,
+[data-screen="20"] .sim-reopen-btn.is-open { animation: none; }
+@keyframes simReopenPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
 /* Popup anchored near .sim-reopen-btn (top:20/left:40) the same way
    Psifas's .reminder-help-popup sits near .reminder-btn, instead of a
@@ -1581,6 +1643,39 @@ html, body {
 .q1-table td:first-child { text-align: right; font-weight: 600; color: #1b2a4d; }
 .q1-table tbody tr:nth-child(odd) { background: #fff; }
 .q1-table tbody tr:nth-child(even) { background: #dcecea; }
+
+/* Per-row result icon column, living OUTSIDE the table itself (a sibling,
+   not a table cell) so it can never widen a row's content and force text
+   to wrap — that wrapping was exactly what shrank/lengthened the table
+   when the icon lived inside a <td>. Each .q1-icon is positioned by
+   q1PositionIcons() (script.js) to line up with its row's vertical center,
+   computed from the row's actual rendered rect (so it stays correct even
+   when a row wraps to two lines, like row f). Same checkmark/X glyphs as
+   the Psifas reference project's gp-icon-correct/gp-icon-incorrect assets,
+   inlined as data-URIs (a data-URI SVG can't resolve var(--stroke-0,...)
+   against this page's :root, so the fallback color is hardcoded directly
+   into each one). Empty/transparent until q1Render() sets .correct or
+   .wrong once the row has an answer. */
+.q1-icons-col {
+  position: absolute;
+  margin-right: -40px;
+}
+.q1-icon {
+  position: absolute;
+  right: 0;
+  width: 26px;
+  height: 24px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.q1-icon.correct {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28.0003 26.4691' fill='none'%3E%3Cpath d='M26.5002 1.50009L8.90396 24.9691L1.50022 12.729' stroke='%231A7F37' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 26px 24px;
+}
+.q1-icon.wrong {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18' fill='none'%3E%3Cpath d='M16.5 1.5L1.5 16.5M1.5 1.5L16.5 16.5' stroke='%23CA433D' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: 22px 22px;
+}
 .q1-toggle-group { display: flex; gap: 10px; justify-content: center; }
 .q1-toggle {
   width: 26px;
@@ -1604,7 +1699,7 @@ html, body {
 .q1-toggle.wrong { border-color: var(--red-100); }
 .q1-toggle.wrong.selected::after { background: var(--red-100); }
 
-.q1-row { display: flex; gap: 30px; align-items: flex-start; }
+.q1-row { display: flex; align-items: flex-start; }
 /* q1_picture.png is a full 1920x1080 canvas with the tilted polaroid art
    only in one corner — cropped via background-position/size to its own
    measured bbox (196,212)-(952,796) rather than stretched. */
@@ -1631,6 +1726,12 @@ html, body {
    (539x760, portrait) so it's used as a plain <img>, no crop math needed. */
 [data-screen="26"] .q-title { color: #000; font-size: 34px; }
 [data-screen="26"] .q-body { font-size: 34px; }
+/* Give the question column more room than the base 800/800 split — the
+   photos in .s26-left are absolutely positioned (independent of this box's
+   width, see .q7-picture below), so shrinking the box just frees up space
+   for .s12-right to shift left and grow into. */
+[data-screen="26"] .s12-left { width: 340px; }
+[data-screen="26"] .s12-right { width: 1400px; }
 /* .s26-left holds either .q7-picture (before answering) or the teacher+
    bubble column .qt-teacher-col (swapped in after, see script.js) — same
    fixed-width .s12-left slot every other split-question screen uses, so
@@ -1640,7 +1741,7 @@ html, body {
   position: absolute;
   top: 30px;
   left: 0px;
-  width: 31%;
+  width: 30%;
   height: auto;
   z-index: -1;
   pointer-events: none;
@@ -1666,8 +1767,8 @@ html, body {
 .s26-left .qt-bubble {
   position: absolute;
   width: 55%;
-  margin-bottom: 365px;
-  margin-left: -250px;
+  margin-bottom: 320px;
+  margin-left: -273px;
 }
 .s26-left .qt-teacher-img { width: 57%; margin: 0; display: block; }
 [data-screen="26"] .qt-bubble-text { top: 22px; right: 14px; width: 420px; }
@@ -1735,6 +1836,13 @@ html, body {
 .ddq-target.drag-over { border-color: var(--subject-500); background: #fff; }
 .ddq-target.occupied { border-style: solid; border-color: var(--subject-500); background: var(--subject-100); }
 .ddq-target.correct { border-style: solid; border-color: var(--green-80); background: var(--green-5); }
+/* Visual box stays the original 56px — the drop hit-area is enlarged
+   instead by binding ondragover/ondragleave/ondrop on the whole
+   .ddq-step-row (index.html), not just this small square, so dropping
+   anywhere over the row's text "magnets" into the right target. Native
+   HTML5 DnD only fires drop where the pointer literally is, so widening
+   the listening ELEMENT is the only way to get a forgiving drop zone
+   without changing how the target looks. */
 .ddq-drag-card {
   width: 56px; height: 56px;
   border-radius: 10px;
@@ -1784,11 +1892,21 @@ html, body {
    same "סיימתי"-style finish button as the Psifas reference lomda's
    completion screen — just repositioned to bottom-center instead of
    .btn-continue's default bottom-right question-check spot. */
+/* .btn-continue's background is a fixed-pixel crop out of a shared sprite
+   sheet (btn-submit-sprite-*.png at native 1920x1080, cropped via
+   background-position to this button's exact 206x136 box) — changing
+   width/height directly would just reveal more of the surrounding sprite
+   instead of scaling the crop, so the button is enlarged with a uniform
+   transform:scale() instead, which scales the sprite crop and the text
+   together without distorting either. */
 .completion-finish-btn {
   bottom: 40px;
   left: 0;
   right: 0;
   margin: 0 auto;
+  transform: scale(1.35);
+  transform-origin: bottom center;
+  font-size: 40px;
 }
 
 /* ---------- Dev bar (index_dev.html only) ---------- */
@@ -1837,6 +1955,13 @@ html, body {
    screenshot/QA capture) is unaffected. */
 @media (prefers-reduced-motion: reduce) {
   .nav-btn.blink { animation: none; }
+  [data-screen="10"] .sim-reopen-btn,
+  [data-screen="13"] .sim-reopen-btn,
+  [data-screen="14"] .sim-reopen-btn,
+  [data-screen="15"] .sim-reopen-btn,
+  [data-screen="16"] .sim-reopen-btn,
+  [data-screen="19"] .sim-reopen-btn,
+  [data-screen="20"] .sim-reopen-btn { animation: none; }
   .rtg-flipcard-face { transition: none; }
   * { scroll-behavior: auto !important; }
 }
