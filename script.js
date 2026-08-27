@@ -108,6 +108,7 @@ function s12ToggleAudio() {
   const icon = btn && btn.querySelector('.s12-audio-btn-icon');
   if (!audio || !icon) return;
   if (audio.paused) {
+    audio.playbackRate = 1.08; // slightly faster pace, per feedback
     audio.play().catch(function () {});
     icon.textContent = '⏸';
   } else {
@@ -409,7 +410,7 @@ const VIDEO_CAPTIONS = {
     [5.57, 9.41, 'אני חושבת שאני יודעת מה גורם להבהובי האור.'],
     [9.41, 11.87, 'אפשר לראות מה מצאת?'],
     [12.05, 15.61, 'אסור לכם לגעת בארון חשמל בגלל סכנת התחשמלות,'],
-    [15.61, 17.49, 'בואו נראה את זה בסימולציה.']
+    [15.61, 17.49, 'בואו נראה את זה בהתנסות.']
   ],
   25: [
     [0.0, 3.02, 'אתמול פעלנו בדיוק כמו מדענים ומדעניות.'],
