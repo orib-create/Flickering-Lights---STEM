@@ -27,6 +27,11 @@
   --natural-200: #F3F4F5;
 
   --science-gradient: linear-gradient(to bottom, #005FBE 9%, #0059B2 23.361%, #003971 100%);
+
+  /* Keyboard focus ring for controls on dark/video surfaces (.vc-btn) —
+     white gives strong contrast against the near-black .vctrls background;
+     only ever shown on :focus-visible, so it doesn't change default look. */
+  --focus: 2px solid #fff;
 }
 
 /* Local Assistant font faces — without these, 'Assistant' silently falls
@@ -459,10 +464,21 @@ html, body {
 }
 [data-screen="2"] .textbox1-bg,
 [data-screen="3"] .textbox1-bg,
-[data-screen="11"] .textbox1-bg,
-[data-screen="17"] .textbox1-bg {
+[data-screen="11"] .textbox1-bg {
   width: 1635px;
   height: 1080px;
+  left: auto;
+  top: 4px;
+}
+/* Screen 17's narration text needed a wider bubble than the shared crop
+   above — its speech-bubble background image is scaled up (right-anchored,
+   so it only grows leftward) rather than just widening the crop window,
+   because the crop only reveals more of the same fixed-position image; the
+   image's own opaque face has a fixed left edge, so a wider crop without a
+   wider image just exposed transparent background behind the extra text. */
+[data-screen="17"] .textbox1-bg {
+  width: 1900px;
+  height: 1069px;
   left: auto;
   top: 4px;
 }
@@ -543,8 +559,10 @@ html, body {
 
 /* Per-screen textbox1-content tuning (visually tuned per screen) */
 [data-screen="2"] .textbox1-content { top: 30px; width: 1350px; height: 115px; }
+#textbox-content-s2 p { line-height: 46px; }
 
 #textbox-content-s3 { width: 1120px; height: 125px; margin-top: 15px; }
+#textbox-content-s3 p { line-height: 46px; }
 
 [data-screen="5"] .textbox1-content { width: 1130px; height: 163px; }
 [data-screen="5"] .textbox1-content p.nowrap-line { white-space: normal; }
@@ -552,24 +570,35 @@ html, body {
 [data-screen="7"] .textbox1-content { right: -40px; width: 1123px; }
 
 [data-screen="8"] .textbox1-content { width: 1160px; }
+[data-screen="8"] .textbox1-wrap { top: 0px; }
+#textbox-content-s8 p { line-height: 45px; }
 
-[data-screen="9"] .textbox1-content { top: 30px; width: 1350px; height: 115px; }
+[data-screen="9"] .textbox1-content { top: 10px; width: 1350px; height: 115px; }
 [data-screen="9"] .textbox1-wrap { width: 1350px; height: 280px; }
+#textbox-content-s9 p { line-height: 46px; }
 
 [data-screen="11"] .textbox1-content { top: 30px; width: 1350px; height: 115px; }
+#textbox-content-s11 p { line-height: 46px; }
 
-#textbox-content-s17 { height: 94px; width: 1060px; margin-top: 0px; }
+#textbox-content-s17 { height: 94px; width: 1250px; margin-top: 0px; }
+#textbox-content-s17 p { line-height: 46px; }
+[data-screen="17"] .textbox1-bg-crop { width: 1700px; }
 
 
 [data-screen="18"] .textbox1-content { top: 30px; right: -43px; width: 960px; }
 /* Screen 17 no longer uses textbox1-right-bg (the baked-in tablet card
    graphic) or the JS auto-height calc — strip/corner are fixed by hand. */
 #textbox-strip-s18 { top: -43px; height: 171px; right: -250px; }
-#textbox-corner-s18 { top: 124px; right: -249px; height: 133px; }
+#textbox-corner-s18 { top: 124px; right: -249px; height: 160px; }
+#textbox-content-s18 p { line-height: 45px; }
+[data-screen="18"] .textbox1-wrap { top: 0px; }
 
 [data-screen="24"] .textbox1-content { top: 0; right: 0; width: 1050px; }
+[data-screen="24"] .textbox1-wrap { top: 0px; }
+#textbox-content-s24 p { line-height: 46px; }
 
 [data-screen="21"] .textbox1-bg-crop { right: -400px; top: -66px; }
+#textbox-content-s21 p { line-height: 46px; }
 
 /* ---------- RevealTilesGroup (screens 4 & 21) ---------- */
 /* Screen 4's intro line lives in a bubble-talk_2.png callout, with the
@@ -1883,7 +1912,7 @@ html, body {
   font-family: 'Assistant', sans-serif;
   font-size: 34px;
   font-weight: 600;
-  line-height: 1.1;
+  line-height: 46px;
   color: #111;
   text-align: right;
   margin: 0;

@@ -111,15 +111,21 @@ function s12ToggleAudio() {
     audio.playbackRate = 1.08; // slightly faster pace, per feedback
     audio.play().catch(function () {});
     icon.textContent = '⏸';
+    btn.setAttribute('aria-pressed', 'true');
   } else {
     audio.pause();
     icon.textContent = '🔊';
+    btn.setAttribute('aria-pressed', 'false');
   }
 }
 (function () {
   const audio = document.getElementById('s12-teacher-audio');
-  const icon = document.querySelector('#s12-audio-btn .s12-audio-btn-icon');
-  if (audio && icon) audio.addEventListener('pause', function () { icon.textContent = '🔊'; });
+  const btn = document.getElementById('s12-audio-btn');
+  const icon = btn && btn.querySelector('.s12-audio-btn-icon');
+  if (audio && icon) audio.addEventListener('pause', function () {
+    icon.textContent = '🔊';
+    btn.setAttribute('aria-pressed', 'false');
+  });
 })();
 
 /* A display:none .screen's own <img loading="lazy"> elements only start
@@ -513,7 +519,11 @@ function initVideoControls(n) {
     ccBtn.setAttribute('aria-pressed', String(videoCaptionsEnabled[n]));
   });
 
-  function syncMuteIcon() { muteBtn.textContent = video.muted || video.volume === 0 ? '🔇' : '🔊'; }
+  function syncMuteIcon() {
+    const isMuted = video.muted || video.volume === 0;
+    muteBtn.textContent = isMuted ? '🔇' : '🔊';
+    muteBtn.setAttribute('aria-pressed', String(isMuted));
+  }
   muteBtn.addEventListener('click', function () {
     video.muted = !video.muted;
     if (!video.muted && video.volume === 0) video.volume = 1;
@@ -527,11 +537,15 @@ function initVideoControls(n) {
   });
   syncMuteIcon();
 
+  function syncFullIcon() {
+    fullBtn.setAttribute('aria-pressed', String(document.fullscreenElement === wrap));
+  }
   fullBtn.addEventListener('click', function () {
     const target = wrap;
     if (document.fullscreenElement) { document.exitFullscreen().catch(function () {}); }
     else if (target.requestFullscreen) { target.requestFullscreen().catch(function () {}); }
   });
+  document.addEventListener('fullscreenchange', syncFullIcon);
 }
 
 function playVideo(n) {
@@ -949,6 +963,14 @@ const Q1_FEEDBACK = {
       'לרעיונות האלה קוראים השערות מדעיות.'
     ]
   },
+  partial: {
+    title: 'זו תשובה חלקית',
+    body: [
+      'רעיונות מדעיים הם רעיונות שניתן לבדוק בעזרת כלים ושיטות מדעיות, והבדיקה יכולה לאשש אותם או להפריך אותם. במקרה שלנו: נורה שמתחממת, חיבור רופף, ברקים וחשמל סטטי.',
+      'רעיונות לא מדעיים הם רעיונות שאי‑אפשר לבדוק בעזרת כלים ושיטות מדעיות, או רעיונות שנבדקו והבדיקה הפריכה אותם, ולכן הם אינם נחשבים תקפים מבחינה מדעית. במקרה שלנו: מגנט ענק, רוח רפאים חשמלית וחייזרים ששולחים סימנים.',
+      'לרעיונות האלה קוראים השערות מדעיות.'
+    ]
+  },
   wrong2: {
     title: 'זו טעות, כל הכבוד על הניסיון.',
     body: [
@@ -992,6 +1014,9 @@ function q1Toggle(rowId, val) {
 
 function q1AllCorrect() {
   return Q1_ROWS.every(function (r) { return q1State.answers[r.id] === r.correct; });
+}
+function q1HasAnyCorrect() {
+  return Q1_ROWS.some(function (r) { return q1State.answers[r.id] === r.correct; });
 }
 
 function q1Render(finalReveal) {
@@ -1063,7 +1088,8 @@ function q1Check() {
     showFeedback('correct', Q1_FEEDBACK.correct);
   } else {
     recordScore('q1', 0);
-    showFeedback('wrong2', Q1_FEEDBACK.wrong2);
+    const outcome = q1HasAnyCorrect() ? 'partial' : 'wrong2';
+    showFeedback(outcome, Q1_FEEDBACK[outcome]);
   }
   checkBtn.disabled = true;
   revealForwardNav(6);
