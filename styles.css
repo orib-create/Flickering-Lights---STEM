@@ -1896,7 +1896,7 @@ html, body {
 .completion-bubble {
   position: absolute;
   /* top: 5px; */
-  /* right: 5px; */
+  right: -65px;
   width: 950px;
   height: 10%;
 }
